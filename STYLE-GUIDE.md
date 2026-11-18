@@ -19,7 +19,7 @@ The user is Pak Hendra, 52, who checks his phone at 06:30 and needs three answer
 1. **One screen, no hunting.** On desktop every tab fits the viewport (tested at 1440×900 and 1366×768). Long lists scroll inside their card, never the page.
 2. **Quiet chrome, meaningful color.**
    - Icons sit on neutral gray tiles.
-   - Color is reserved for status (green / orange / red / purple) and for data: each data series gets its own hue (blue `#2463EB`, teal `#14B8A6`, violet `#8B5CF6`, amber `#F5A524`, slate `#CBD5E1` for "others"). CV Maju Jaya is always light blue (`#8EC2FF`); production lines are always Line 1 blue, Line 2 teal, Line 3 violet. Receivables aging uses blue → amber → orange → red by lateness.
+   - Color is reserved for status (green / orange / red / purple) and for data: **data is one blue hue in steps** (`c1` #2463EB → `c2` #609FFF → `c3` #A9CBFF → `c4` #D6E4FF, `c5` slate for "others"). Products are Line 1 → 3 in those steps; CV Maju Jaya is light blue (#8EC2FF). **Color beyond blue only marks problems:** red for critical, soft red (`crit-2`) for the next level, slate for the rest (materials at risk, aging, purchase orders). Warning deltas keep neutral text with only the arrow in orange. The status banner and Needs attention are the only warm-colored blocks on the Overview.
    - The primary action is the only Azure button.
 3. **One component pattern.** Every card is *neutral icon tile + title + one control on the right* (info, filter or action).
 4. **Monitoring density.** More data per card, shown with small type and visual patterns (segmented bars, striped bars, stacked charts) rather than big text.
@@ -40,7 +40,7 @@ The user is Pak Hendra, 52, who checks his phone at 06:30 and needs three answer
 | — | `raised` | `#F7F8FA` | Table header, hover, impact boxes |
 | — | `line` / `line-2` | `#ECECEE` / `#E1E2E6` | Borders / control outlines |
 | — | `text-2` / `text-3` | `#4F5562` / `#626875` | Secondary / meta text |
-| Azure Dream | `accent-2` → `accent` | `#609FFF` → `#2463EB` | Primary button gradient, send button, user chat bubble, Sari's AI sparkles, Fugodash Surya logo arch (`#609FFF` → `#1A4FC9`) and sun (`#2463EB`) |
+| Azure Dream | `accent-2` → `accent` | `#609FFF` → `#2463EB` | Primary button gradient, send button, user chat bubble, Sari's AI sparkles, Fugodash logo arch (`#609FFF` → `#1A4FC9`) and sun (`#2463EB`) |
 | — | `accent-soft` / `accent-line` | `#EEF4FF` / `#D7E5FF` | Sari's surfaces, segmented-control selection, "From Sari" filter chip |
 
 ### 2.2 Chart categories: one hue, four steps (reference style)
@@ -107,7 +107,7 @@ Status always comes as a dot or bar **plus** a word.
 **Desktop shell (≥ 1024 wide, ≥ 700 tall):** `100dvh` with no page scroll.
 
 ```
-Top bar ............ logo · Fugodash Surya / for PT Sari Rasa Nusantara | [greeting · date · freshness] · refresh · bell(count)
+Top bar ............ logo · PT Sari Rasa Nusantara / Powered by Fugodash | [greeting · date · freshness] · refresh · bell(count)
 Tab bar ............ [Overview | Production | Stock | Finance] ...... filters for this tab
 View (fills rest) .. tab content; cards stretch, lists scroll inside
 ```

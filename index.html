@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5F5F5">
 <script>try{const t=localStorage.getItem('fd-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
-<meta name="application-name" content="Fugodash Surya">
-<title>Fugodash Surya · PT Sari Rasa Nusantara</title>
+<meta name="application-name" content="Fugodash">
+<title>PT Sari Rasa Nusantara · Fugodash</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="alternate icon" href="assets/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -20,8 +20,8 @@
   --line:#ECECEE;--line-2:#E1E2E6;
   --text:#01040C;--text-2:#4F5562;--text-3:#626875;
   --accent:#2463EB;--accent-2:#609FFF;--accent-ink:#1A4FC9;--accent-soft:#EEF4FF;--accent-line:#D7E5FF;
-  /* chart categories: one distinct hue per data series */
-  --c1:#2463EB;--c2:#14B8A6;--c3:#8B5CF6;--c4:#F5A524;--c5:#CBD5E1;
+  /* data palette: one blue hue in steps; color beyond blue is reserved for problems */
+  --c1:#2463EB;--c2:#609FFF;--c3:#A9CBFF;--c4:#D6E4FF;--c5:#CBD5E1;--crit-2:#F8B4B4;
   --ok:#2FB86E;--ok-soft:#EAF8F0;--ok-ink:#15803D;
   --warn:#F07B3F;--warn-soft:#FEF1E9;--warn-ink:#B4471A;
   --crit:#EF4444;--crit-soft:#FDEDED;--crit-ink:#B42318;
@@ -39,7 +39,7 @@
   --line:#222B3D;--line-2:#2E3850;--grid:#263044;
   --text:#E8ECF4;--text-2:#A9B2C3;--text-3:#8790A3;
   --accent:#3D7BF2;--accent-2:#6FA8FF;--accent-ink:#93BCFF;--accent-soft:#15213B;--accent-line:#253A63;
-  --c5:#3B465C;
+  --c5:#3B465C;--c2:#4F8EF5;--c3:#7FA6E8;--c4:#34507F;--crit-2:#7A3434;
   --ok-soft:#0F2A1D;--ok-ink:#62D394;--warn-soft:#2E1D12;--warn-ink:#F6A572;--crit-soft:#2E1517;--crit-ink:#FF8E8E;--prog-soft:#1F1A3B;--prog-ink:#B7A6FF;
   --sh-1:0 1px 2px rgba(0,0,0,.35);--sh-2:0 1px 2px rgba(0,0,0,.35);--sh-3:0 24px 48px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35);
   color-scheme:dark;}}
@@ -47,7 +47,7 @@
   --line:#222B3D;--line-2:#2E3850;--grid:#263044;
   --text:#E8ECF4;--text-2:#A9B2C3;--text-3:#8790A3;
   --accent:#3D7BF2;--accent-2:#6FA8FF;--accent-ink:#93BCFF;--accent-soft:#15213B;--accent-line:#253A63;
-  --c5:#3B465C;
+  --c5:#3B465C;--c2:#4F8EF5;--c3:#7FA6E8;--c4:#34507F;--crit-2:#7A3434;
   --ok-soft:#0F2A1D;--ok-ink:#62D394;--warn-soft:#2E1D12;--warn-ink:#F6A572;--crit-soft:#2E1517;--crit-ink:#FF8E8E;--prog-soft:#1F1A3B;--prog-ink:#B7A6FF;
   --sh-1:0 1px 2px rgba(0,0,0,.35);--sh-2:0 1px 2px rgba(0,0,0,.35);--sh-3:0 24px 48px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35);
   color-scheme:dark;}
@@ -137,7 +137,7 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .t-n{background:var(--tile);color:var(--text-2);box-shadow:inset 0 0 0 1px var(--line)}
 .delta{display:inline-flex;align-items:center;gap:3px;font-size:var(--fs-sm);line-height:var(--lh-sm);font-weight:500;white-space:nowrap}
 .delta .vs{color:var(--text-3);font-weight:400;margin-left:3px}
-.d-ok{color:var(--ok-ink)}.d-warn{color:var(--warn-ink)}.d-crit{color:var(--crit-ink)}
+.d-ok{color:var(--ok-ink)}.d-warn{color:var(--text)}.d-warn svg{color:var(--warn)}.d-crit{color:var(--crit-ink)}
 
 /* ============ Top bar & tabs ============ */
 .top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:10px}
@@ -148,6 +148,7 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .brand h1{font-size:var(--fs-title);line-height:18px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
 .brand p{font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .brand p .warn{color:var(--warn-ink)}
+.brand p b{font-weight:600;color:var(--text-2)}
 .pill-meta.greet{gap:10px;color:var(--text-2)}
 .pill-meta.greet b{font-weight:500;color:var(--text)}
 .pill-meta.greet .sep{width:1px;height:14px;background:var(--line-2)}
@@ -188,7 +189,9 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .view{display:flex;flex-direction:column;gap:12px;padding-bottom:16px}
 .ov-bottom{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.95fr);gap:12px;flex:1;min-height:0}
 /* Overview hierarchy: what to act on gets the most width (alerts), then the trend, then Sari */
-.ov-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1.15fr) minmax(300px,.85fr);gap:12px;flex:1;min-height:0}
+/* 12-col grid with the same gap as the KPI row: alerts 5 · chart 4 · Sari 3 (= exactly one KPI card wide, edges aligned) */
+.ov-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;flex:1;min-height:0}
+.ov-grid>:nth-child(1){grid-column:span 5}.ov-grid>:nth-child(2){grid-column:span 4}.ov-grid>:nth-child(3){grid-column:span 3}
 
 /* Status strip */
 .status{display:grid;grid-template-columns:auto minmax(0,1fr) 240px;gap:12px 20px;align-items:center;padding:12px 16px;flex:none}
@@ -234,7 +237,8 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .kpi-h{display:flex;align-items:center;gap:10px;font-weight:500;min-width:0}
 .kpi-l{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .kpi-h .per{margin-left:auto;padding-left:8px;font-size:var(--fs-cap);color:var(--text-3);font-weight:400;white-space:nowrap}
-.kpi-h .per.stale{color:var(--warn-ink);font-weight:500}
+.kpi-h .per.stale{color:var(--text-2)}
+.kpi-h .per.stale::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--warn);margin-right:6px;vertical-align:1px}
 .kpi-vr{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .fig{font-size:var(--fs-fig);line-height:var(--lh-fig);font-weight:500;letter-spacing:-.02em;white-space:nowrap}
 .fig small{font-size:var(--fs-body);color:var(--text-2);font-weight:400;margin-left:3px;letter-spacing:0}
@@ -305,6 +309,25 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .state.row>svg{width:76px;height:64px}
 .state.row p{margin:2px 0 0;max-width:640px}.state.row .state-act{justify-content:flex-start;margin-top:10px}
 .state-card{flex:none}
+#syncPop{position:fixed;top:72px;right:16px;z-index:60;width:min(360px,calc(100vw - 32px))}
+.sync-pop{position:relative;display:flex;gap:12px;align-items:flex-start;padding:12px 36px 12px 12px;border-radius:14px;color:#fff;box-shadow:var(--sh-3);animation:popIn .4s var(--ease) both}
+.sync-pop.err{background:linear-gradient(135deg,#EF4444,#DC2626)}
+.sync-pop.off{background:var(--ink);color:var(--bg)}
+.sync-pop.off .sp-ic{background:color-mix(in srgb,var(--bg) 16%,transparent)}
+.sync-pop.off .sp-x{color:var(--bg)}
+.is-offline{filter:grayscale(1);opacity:.55;pointer-events:none;user-select:none;transition:filter .4s,opacity .4s}
+.sp-ic{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.2)}
+.sync-pop.err .sp-ic svg{animation:rot 2.4s linear infinite}
+.sp-t{min-width:0}.sp-t b{display:block;font-size:var(--fs-body);line-height:var(--lh-body);font-weight:600}
+.sp-t span{display:block;font-size:var(--fs-sm);line-height:var(--lh-sm);opacity:.9;margin-top:2px}
+.sp-a{display:flex;gap:6px;margin-top:10px}
+.sp-a button{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:8px;background:#fff;color:#0B1220;font-size:var(--fs-sm);font-weight:600}
+.sp-a button.ghost{background:rgba(255,255,255,.16);color:#fff}
+.sync-pop.err .sp-a button:not(.ghost){color:#B91C1C}.sync-pop.off .sp-a button:not(.ghost){background:var(--bg);color:var(--ink)}
+.sp-x{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:6px;display:grid;place-items:center;color:#fff;opacity:.8}
+@media (hover:hover){.sp-x:hover{opacity:1;background:rgba(255,255,255,.16)}}
+@keyframes popIn{from{opacity:0;transform:translateY(-8px) scale(.97)}}
+@media (max-width:1023px){#syncPop{top:auto;bottom:calc(92px + env(safe-area-inset-bottom));right:16px}}
 .state-card.err{border-color:color-mix(in srgb,var(--warn) 35%,transparent);background:linear-gradient(90deg,var(--warn-soft),var(--card) 55%)}
 .state-card.off{background:linear-gradient(90deg,var(--tile),var(--card) 55%)}
 @media (max-width:560px){.state.row{flex-direction:column;align-items:flex-start}.state.row>svg{width:64px;height:54px}}
@@ -337,6 +360,9 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .buddy-b{padding:0 16px;display:flex;flex-direction:column;gap:10px}
 .insight{position:relative;border-radius:14px;padding:12px 14px 16px;min-height:0;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line);overflow:hidden;isolation:isolate}
 .insight::before{content:'';position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(36,99,235,.16) 1px,transparent 1.2px);background-size:12px 12px;mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%)}
+.sari-calm{padding:4px 2px 0}
+.sari-calm b{display:block;font-size:var(--fs-title);line-height:var(--lh-title);font-weight:600}
+.sari-calm p{margin-top:4px;font-size:var(--fs-sm);line-height:var(--lh-sm);color:var(--text-2);max-width:300px}
 /* Sari card: tinted, patterned surface so the assistant reads as its own thing */
 #buddyCard{position:relative;isolation:isolate;border-color:var(--accent-line);background:radial-gradient(90% 55% at 100% 0%,rgba(96,159,255,.30),transparent 70%),linear-gradient(180deg,var(--accent-soft) 0%,color-mix(in srgb,var(--accent-soft) 45%,var(--card)) 40%,var(--card) 78%)}
 #buddyCard::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;background-image:radial-gradient(rgba(36,99,235,.20) 1px,transparent 1.3px);background-size:14px 14px;-webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 35%,transparent 62%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 35%,transparent 62%)}
@@ -360,7 +386,7 @@ svg.flip{transform:scaleX(-1)}
 .insight:hover .ins-prog i,.insight:focus-within .ins-prog i,.insight.paused .ins-prog i{animation-play-state:paused}
 .insight.paused .ins-prog{opacity:.5}
 .ins-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.ins-tag{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-cap);font-weight:600;color:var(--accent-ink)}
+.ins-tag{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:var(--fs-cap);font-weight:600;color:var(--accent-ink)}
 .next{display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-cap);color:var(--text-2);height:24px;padding:0 6px;border-radius:6px;background:var(--card);box-shadow:inset 0 0 0 1px var(--accent-line)}
 .ins-t{font-weight:500}
 .insight .btn{margin-top:12px}
@@ -446,6 +472,8 @@ svg.flip{transform:scaleX(-1)}
 .track{position:relative;height:8px;border-radius:99px;background:var(--tile);box-shadow:inset 0 0 0 1px var(--line)}
 .track i{position:absolute;inset:0 auto 0 0;border-radius:99px;transform-origin:left;animation:grow .7s var(--ease) both}
 .track .mk{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);border-radius:1px}
+[data-tip]{cursor:help}
+.track[data-tip]::after,.stripe[data-tip]::after{content:'';position:absolute;inset:-8px 0}
 .f-ok{background:var(--ok)}.f-warn{background:var(--warn)}.f-crit{background:var(--crit)}.f-acc{background:var(--accent)}
 .meta{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
 .meta b{color:var(--text-2);font-weight:500}
@@ -525,6 +553,9 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .thread{display:flex;flex-direction:column;gap:14px;padding-top:4px}
 .q{align-self:flex-end;max-width:80%;background:linear-gradient(180deg,#3573F0,var(--accent));color:#fff;border-radius:14px 14px 4px 14px;padding:8px 12px;animation:rise .25s var(--ease) both}
 .a{display:grid;grid-template-columns:32px minmax(0,1fr);gap:10px;align-items:start;animation:rise .35s var(--ease) both}
+/* a new answer arrives piece by piece, like it's being written */
+.a-card.reveal>*{animation:rise .42s var(--ease) both}
+.a-card.reveal>*:nth-child(2){animation-delay:110ms}.a-card.reveal>*:nth-child(3){animation-delay:220ms}.a-card.reveal>*:nth-child(4){animation-delay:330ms}.a-card.reveal>*:nth-child(5){animation-delay:440ms}.a-card.reveal>*:nth-child(6){animation-delay:550ms}.a-card.reveal>*:nth-child(7){animation-delay:660ms}.a-card.reveal>*:nth-child(8){animation-delay:770ms}
 .a-card{border:1px solid var(--line);background:var(--card);border-radius:4px 14px 14px 14px;padding:12px 14px;box-shadow:var(--sh-1)}
 .a-card.unsure{border-color:rgba(240,123,63,.45)}
 .a-card.err{background:var(--crit-soft);border-color:transparent}
@@ -569,10 +600,11 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .sk-rows span{flex:1;display:block}.sk-rows i{display:block}
 .sk-lc{display:grid;gap:12px;padding:0 16px 16px}
 .toasts{position:fixed;left:50%;bottom:24px;translate:-50% 0;display:grid;gap:8px;z-index:80;width:min(440px,calc(100vw - 32px))}
-.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 12px 10px 14px;box-shadow:var(--sh-3);animation:rise .3s var(--ease) both}
-.toast.ok .ti{color:#5BE39A}.toast.err .ti{color:#FF9B9B}
-.toast span{flex:1}
-.toast button{font-weight:600;color:var(--accent-2);height:30px;padding:0 8px;border-radius:8px}
+.toast{display:flex;align-items:flex-start;gap:10px;background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 12px 12px 14px;font-size:var(--fs-sm);line-height:var(--lh-sm);text-align:left;box-shadow:var(--sh-3);animation:rise .3s var(--ease) both}
+.toast .ti{flex:none;display:grid;place-items:center;height:var(--lh-sm)}
+.toast .tm{flex:1;min-width:0}
+.toast.ok .ti{color:#5BE39A}.toast.err .ti{color:#FF9B9B}.toast.info .ti{color:var(--accent-2)}
+.toast button{flex:none;align-self:center;margin:-6px 0;font-weight:600;color:var(--accent-2);height:30px;padding:0 8px;border-radius:8px}
 .toast.out{animation:out .2s ease forwards}
 .demo-btn{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:39;width:36px;height:36px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2),var(--sh-1);display:grid;place-items:center;color:var(--text-2)}
 .dseg{display:flex;flex-wrap:wrap;gap:6px}
@@ -584,6 +616,7 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .wa{border-radius:12px;background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 30%,transparent);padding:10px 12px;font-size:var(--fs-sm)}
 .wa .wh{display:flex;justify-content:space-between;font-size:var(--fs-cap);font-weight:600;color:#15803D;margin-bottom:4px}
 .lbl-m{display:none}
+.lbl-short{display:none}
 
 @keyframes rot{to{transform:rotate(360deg)}}
 @keyframes sh{to{background-position:-200% 0}}
@@ -602,6 +635,9 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .seg{transition:opacity .15s}
 @media (hover:hover){.chart svg:has(.bcol:hover) .bcol:not(:hover) .seg{opacity:.4}}
 .enter > *{animation:rise .35s var(--ease) both}
+.view.swipe-l{animation:swipeL .34s cubic-bezier(.22,1,.36,1) both}.view.swipe-r{animation:swipeR .34s cubic-bezier(.22,1,.36,1) both}
+@keyframes swipeL{from{opacity:.4;transform:translate3d(40%,0,0)}}@keyframes swipeR{from{opacity:.4;transform:translate3d(-40%,0,0)}}
+@media (max-width:1023px){.view{touch-action:pan-y;will-change:transform}body{overflow-x:hidden}}
 .enter > *:nth-child(2){animation-delay:.04s}.enter > *:nth-child(3){animation-delay:.08s}
 
 /* ============ Mobile & tablet ============ */
@@ -628,10 +664,14 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
   .mini .itile{display:none}
   .mini .ch-t b small{display:block;margin-left:0;font-size:var(--fs-cap);line-height:var(--lh-cap)}
   .tools{flex-wrap:wrap;overflow:visible;row-gap:8px}
+  /* phones: export becomes icon-only and the 'Product' label hides so filters + export fit on one line */
+  .tools .x-lbl,.tools .t-lbl{display:none}
+  .tools{flex-wrap:nowrap}.tools .lbl-long{display:none}.tools .lbl-short{display:inline}
+  .tools [data-act=export]{width:36px;padding:0;margin-left:auto}
   .fab-bub{max-width:min(240px,calc(100vw - 150px))}
   .kpi .leg2,.kpi-h .per{display:none}
   .ov-bottom,.g2,.fgrid,.lines{grid-template-columns:1fr;grid-template-rows:none}
-  .ov-grid{grid-template-columns:1fr}
+  .ov-grid{grid-template-columns:1fr}.ov-grid>*{grid-column:auto!important}
   .fgrid .r2{grid-row:auto;grid-column:auto}
   #buddyCard{display:none}
   .chart{min-height:220px}
@@ -741,8 +781,8 @@ const DUO={
   store:'<path d="M3.5 3h17l1.5 6H2Z" fill="#609FFF"/><path d="M3.5 9h17v10.5A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5Z" fill="#2463EB"/><path d="M9.5 21v-5.5h5V21" fill="#fff"/>'
 };
 // highlight tone for duotone icons: swaps the blue palette (main / light / dark / pale); used only for critical data
-// blue is the standard; only critical data is highlighted. teal / violet exist only so product icons match their chart legend.
-const TONES={crit:['#EF4444','#F87171','#B91C1C','#FCA5A5'],teal:['#14B8A6','#5EEAD4','#0F766E','#99F6E4'],violet:['#8B5CF6','#C4B5FD','#6D28D9','#DDD6FE']};
+// blue is the standard; only critical data is highlighted
+const TONES={crit:['#EF4444','#F87171','#B91C1C','#FCA5A5']};
 const tone=(svg,t)=>{if(!TONES[t])return svg;const[m,l,d,p]=TONES[t];return svg.replaceAll('#2463EB',m).replaceAll('#609FFF',l).replaceAll('#1A4FC9',d).replaceAll('#A9CBFF',p)};
 const lvl=(v,t)=>v>=t*.95?'ok':v>=t*.85?'warn':'crit';
 const itile=(n,c='',t='')=>`<span class="itile ${c}">${/\bhl\b/.test(c)&&DUO[n]?`<svg class="duo" viewBox="0 0 24 24" aria-hidden="true">${tone(DUO[n],t).replaceAll('aiG','aiG'+(++sariN))}</svg>`:ic(n,'i-sm')}</span>`;
@@ -804,8 +844,8 @@ const D7=['11','12','13','14','15','16','17'],D7N=['Wed','Thu','Fri','Sat','Sun'
 const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const PROD={
   L1:{n:'Line 1',p:'Keripik Singkong Balado',type:'Cassava chips',sku:'SR-KSB-120',pack:'120 g',t:12000,a:[11880,11950,11720,11800,11690,11760,11640],dt:[12,8,20,15,22,10,18],rj:[1.7,1.8,1.9,1.8,1.7,1.9,1.8],fg:48200,sell:12000,c:'var(--c1)',hex:'#2463EB',icon:'chips',tone:'',short:'Chips'},
-  L2:{n:'Line 2',p:'Kacang Atom Pedas',type:'Coated peanuts',sku:'SR-KAP-100',pack:'100 g',t:10000,a:[9620,9540,9310,9050,8920,8980,8850],dt:[10,14,22,28,31,30,35],rj:[2.2,2.3,2.4,2.4,2.9,3.2,3.6],fg:21500,sell:10750,c:'var(--c2)',hex:'#14B8A6',icon:'peanut',tone:'teal',short:'Peanuts'},
-  L3:{n:'Line 3',p:'Makaroni Pedas',type:'Extruded snack',sku:'SR-MKP-90',pack:'90 g',t:9000,a:[9050,8980,9120,9010,9150,9090,9180],dt:[5,9,4,7,3,6,6],rj:[1.1,1.2,1.3,1.2,1.1,1.2,1.2],fg:36800,sell:9200,c:'var(--c3)',hex:'#8B5CF6',icon:'macaroni',tone:'violet',short:'Macaroni'}
+  L2:{n:'Line 2',p:'Kacang Atom Pedas',type:'Coated peanuts',sku:'SR-KAP-100',pack:'100 g',t:10000,a:[9620,9540,9310,9050,8920,8980,8850],dt:[10,14,22,28,31,30,35],rj:[2.2,2.3,2.4,2.4,2.9,3.2,3.6],fg:21500,sell:10750,c:'var(--c2)',hex:'#609FFF',icon:'peanut',tone:'',short:'Peanuts'},
+  L3:{n:'Line 3',p:'Makaroni Pedas',type:'Extruded snack',sku:'SR-MKP-90',pack:'90 g',t:9000,a:[9050,8980,9120,9010,9150,9090,9180],dt:[5,9,4,7,3,6,6],rj:[1.1,1.2,1.3,1.2,1.1,1.2,1.2],fg:36800,sell:9200,c:'var(--c3)',hex:'#A9CBFF',icon:'macaroni',tone:'',short:'Macaroni'}
 };
 const NOV=[390,418,392,401,388,410,395,402,386,408,412,398,371,355,362,348,344];
 const MJ=[80,79,80,79,79,80,79,79,79,78,86,84,52,50,50,48,48];
@@ -822,7 +862,7 @@ const DIST={
   '7d':{lbl:'Nov 11–17',prev:'Nov 4–10',rows:[['PT Sumber Pangan Jaya','Jabodetabek',742,735,0],['CV Maju Jaya','Central Java',418,602,212],['UD Berkah Sentosa','East Java',386,392,134],['PT Nusantara Retail Distribusi','West Java',351,364,0],['CV Sinar Abadi','North Sumatra',298,301,54],['Toko Grosir Makmur','Central Java',96,94,86],['13 other distributors','',299,302,0]]},
   'mtd':{lbl:'Nov 1–17',prev:'Oct 1–17',rows:[['PT Sumber Pangan Jaya','Jabodetabek',1880,1825,0],['CV Maju Jaya','Central Java',1210,1551,212],['UD Berkah Sentosa','East Java',980,990,134],['PT Nusantara Retail Distribusi','West Java',900,928,0],['CV Sinar Abadi','North Sumatra',760,760,54],['Toko Grosir Makmur','Central Java',240,236,86],['13 other distributors','',610,620,0]]}
 };
-const AGING=[['Not yet due',1654,'#2463EB'],['1–15 days late',188,'#F5A524'],['16–30 days late',86,'#F07B3F'],['30+ days late',212,'#EF4444']];
+const AGING=[['Not yet due',1654,'var(--c1)'],['1–15 days late',188,'var(--c5)'],['16–30 days late',86,'var(--crit-2)'],['30+ days late',212,'var(--crit)']];
 const OVERDUE=[['CV Maju Jaya','INV-2610-118',212,38,'crit'],['Toko Grosir Makmur','INV-2610-142',86,21,'warn'],['UD Berkah Sentosa','INV-2611-007',134,12,'warn'],['CV Sinar Abadi','INV-2611-019',54,5,'warn']];
 const UPCOMING=[['PT Sumber Pangan Jaya',310,'Nov 20'],['PT Nusantara Retail Distribusi',145,'Nov 22'],['UD Berkah Sentosa',98,'Nov 24']];
 
@@ -861,7 +901,10 @@ const infoBtn=k=>`<button class="info-btn" data-act="info" data-k="${k}" aria-la
 function health(){
   const stopped=LK.filter(isStop),open=openAlerts();
   if(stopped.length>=2)return {lvl:'crit',word:'Critical',icon:'oct',text:`${stopped.map(k=>PROD[k].n).join(' and ')} stopped. Losses grow by about Rp ${fmt(sum(stopped.map(k=>RATE[k]*15)))}K every minute.`,n:open.length};
-  const text=stopped.length?`${PROD[stopped[0]].n} stopped at ${S.lines[stopped[0]].since} and revenue is 8% below target this month.`:'All lines running, but revenue is 8% below target this month.';
+  // Watch: any line down, any open alert, or revenue under 95% of target. On track: none of these.
+  const revPct=S.onTarget?100:92,revOk=revPct>=95;
+  if(!stopped.length&&!open.length&&revOk)return {lvl:'ok',word:'On track',icon:'check',text:'All lines running and revenue is on target.',n:0};
+  const text=stopped.length?`${PROD[stopped[0]].n} stopped at ${S.lines[stopped[0]].since} and revenue is ${100-revPct}% below target this month.`:`All lines running, but revenue is ${100-revPct}% below target this month.`;
   return {lvl:'warn',word:'Watch',icon:'tri',text,n:open.length};
 }
 
@@ -874,21 +917,21 @@ function setTheme(t){if(!S.themeSpin)S.themeSpin=matchMedia('(prefers-reduced-mo
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(!document.documentElement.dataset.theme)renderTop()});
 function renderTop(){
   const n=openAlerts().length;
-  const fresh=S.mode==='offline'?`<span class="st warn">${ic('wifioff','i-sm')}Offline · data from ${S.updated}</span>`
+  const fresh=S.mode==='offline'?`<span class="st">${ic('wifioff','i-sm')}Offline · data from ${S.updated}</span>`
     :S.mode==='error'?`<span class="st warn">${ic('tri','i-sm')}Update failed</span>`
     :`<span class="st">${ic('clock','i-sm')}Updated ${S.updated}</span>`;
   // greeting, date and data freshness live together in one bar on the right
   const chip=`<span class="pill-meta greet"><span>Good morning, <b>Pak Hendra</b></span><i class="sep"></i><span>Wed, Nov 18</span><i class="sep"></i>${fresh}</span>`;
-  el('top').innerHTML=`<div class="top-l"><span class="logo"><img src="assets/fugodash-logo.svg" alt=""></span><div class="brand"><h1>Fugodash Surya</h1><p><span class="lbl-d">for PT Sari Rasa Nusantara</span><span class="lbl-m ${S.mode==='offline'||S.mode==='error'?'warn':''}">${S.mode==='offline'?'Offline · data from '+S.updated:S.mode==='error'?'Update failed':'Updated '+S.updated}</span></p></div></div>
+  el('top').innerHTML=`<div class="top-l"><span class="logo" title="Powered by Fugodash"><img src="assets/fugodash-logo.svg" alt=""></span><div class="brand"><h1>PT Sari Rasa Nusantara</h1><p><span class="lbl-d">Powered by <b>Fugodash</b></span><span class="lbl-m ${S.mode==='error'?'warn':''}">${S.mode==='offline'?'Offline · data from '+S.updated:S.mode==='error'?'Update failed':'Updated '+S.updated}</span></p></div></div>
    <div class="top-r">${chip}<button class="icon-btn ${S.themeSpin?'theme-spin':''}" data-act="theme" aria-label="${isDark()?'Switch to light mode':'Switch to dark mode'}">${ic(isDark()?'sun':'moon','i-sm')}</button><button class="icon-btn" id="refreshBtn" data-act="refresh" aria-label="Refresh data">${ic('refresh','i-sm')}</button><button class="icon-btn" data-act="all-alerts" aria-label="${n} alerts">${ic('bell','i-sm')}${n?`<span class="badge">${n}</span>`:''}</button></div>`;
   el('tabs').innerHTML=TABS.map(([k,i,l])=>`<button role="tab" aria-selected="${S.tab===k}" data-act="tab" data-v="${k}">${ic(i,'i-sm')}${l}</button>`).join('');
   el('tools').innerHTML=tools();
 }
 function tools(){
   const seg=(act,cur,opts)=>`<div class="seg" role="group">${opts.map(([v,l])=>`<button aria-pressed="${cur===v}" data-act="${act}" data-v="${v}">${l}</button>`).join('')}</div>`;
-  if(S.tab==='production')return `<span class="muted" style="font-size:12px">Product</span>${seg('pf',S.pf,[['all','All'],['L1','Chips'],['L2','Peanuts'],['L3','Macaroni']])}<button class="btn btn-s btn-sm" data-act="export">${ic('dl','i-xs')}Export</button>`;
-  if(S.tab==='stock')return `<label class="switch"><input type="checkbox" data-act="sact" ${S.sAct?'checked':''}>Needs action only</label>${seg('sf',S.sf,[['all','All'],['raw','Raw materials'],['pack','Packaging']])}<button class="btn btn-s btn-sm" data-act="export">${ic('dl','i-xs')}Export</button>`;
-  if(S.tab==='finance')return `${S.aiFilter?`<span class="fchip">From Sari: distributors that dropped<button data-act="clear-ai" aria-label="Clear">${ic('x','i-xs')}</button></span>`:''}${seg('fp',S.fp,[['7d','Last 7 days'],['mtd','This month']])}<button class="btn btn-s btn-sm" data-act="export">${ic('dl','i-xs')}Export</button>`;
+  if(S.tab==='production')return `<span class="muted t-lbl" style="font-size:12px">Product</span>${seg('pf',S.pf,[['all','All'],['L1','Chips'],['L2','Peanuts'],['L3','Macaroni']])}<button class="btn btn-s btn-sm" data-act="export" aria-label="Export">${ic('dl','i-xs')}<span class="x-lbl">Export</span></button>`;
+  if(S.tab==='stock')return `<label class="switch"><input type="checkbox" data-act="sact" ${S.sAct?'checked':''}><span class="lbl-long">Needs action only</span><span class="lbl-short">Urgent</span></label>${seg('sf',S.sf,[['all','All'],['raw','<span class="lbl-long">Raw materials</span><span class="lbl-short">Raw</span>'],['pack','Packaging']])}<button class="btn btn-s btn-sm" data-act="export" aria-label="Export">${ic('dl','i-xs')}<span class="x-lbl">Export</span></button>`;
+  if(S.tab==='finance')return `${S.aiFilter?`<span class="fchip">From Sari: distributors that dropped<button data-act="clear-ai" aria-label="Clear">${ic('x','i-xs')}</button></span>`:''}${seg('fp',S.fp,[['7d','Last 7 days'],['mtd','This month']])}<button class="btn btn-s btn-sm" data-act="export" aria-label="Export">${ic('dl','i-xs')}<span class="x-lbl">Export</span></button>`;
   return '';
 }
 
@@ -913,18 +956,28 @@ const ILL={
 };
 // o: {ill,title,text,acts,row,tone}
 const stateBox=o=>`<div class="state ${o.row?'row':''}" role="${o.tone?'alert':'status'}"><svg viewBox="0 0 120 100" aria-hidden="true">${ILL[o.ill]}</svg><div class="state-t"><b>${o.title}</b><p>${o.text}</p>${o.acts?`<div class="state-act">${o.acts}</div>`:''}</div></div>`;
-// top-of-tab banner for sync problems: offline on every tab, production sync error where production data shows
-function syncBanner(){
-  if(S.mode==='offline')return `<section class="card state-card off">${stateBox({ill:'offline',row:true,tone:1,title:"You're offline",text:`Showing the last data from ${S.updated}. Numbers update again as soon as the connection is back.`,acts:`<button class="btn btn-s btn-sm" data-act="retry">${ic('refresh','i-xs')}Try again</button>`})}</section>`;
-  if(S.mode==='error'&&(S.tab==='overview'||S.tab==='production'))return `<section class="card state-card err">${stateBox({ill:'sync',row:true,tone:1,title:'Production data didn\'t sync',text:'Line counters stopped sending at 05:30. Output, downtime and rejects may be out of date; sales, stock and finance are still current.',acts:`<button class="btn btn-p btn-sm" data-act="retry">${ic('refresh','i-xs')}Try again</button><button class="btn btn-s btn-sm" data-act="info" data-k="prod">Where this data comes from</button>`})}</section>`;
-  return '';
+// floating sync alert (top right): red = production sync error, blue = offline. Dismissible until the state changes.
+function syncBanner(){return ''}
+// real connection events: drop to the offline state, and come back (with a refresh) when online again
+addEventListener('offline',()=>{if(S.mode==='offline')return;S.preOffline=S.mode==='loading'?'normal':S.mode;S.mode='offline';S.syncHide=null;render(false);toast('You\'re offline. Showing the last data from '+S.updated+'.','err')});
+addEventListener('online',()=>{if(S.mode!=='offline')return;S.mode=S.preOffline||'normal';S.syncHide=null;render(false);toast('Back online. Numbers are up to date.','ok')});
+if(!navigator.onLine)setTimeout(()=>dispatchEvent(new Event('offline')),1800);
+function renderSyncPop(){
+  let w=el('syncPop');if(!w){w=document.createElement('div');w.id='syncPop';document.body.appendChild(w)}
+  const m=S.mode,show=(m==='offline'||(m==='error'&&(S.tab==='overview'||S.tab==='production')))&&S.syncHide!==m;
+  if(!show){w.innerHTML='';return}
+  const err=m==='error';
+  w.innerHTML=`<div class="sync-pop ${err?'err':'off'}" role="alert"><span class="sp-ic">${ic(err?'refresh':'wifioff','i-sm')}</span>
+    <div class="sp-t"><b>${err?'Production data didn\'t sync':'You\'re offline'}</b><span>${err?'Line counters stopped at 05:30. Sales, stock and finance are current.':`Showing data from ${S.updated}. It updates when you\'re back online.`}</span>
+    <div class="sp-a"><button data-act="retry">${ic('refresh','i-xs')}Try again</button>${err?'<button class="ghost" data-act="info" data-k="prod">Details</button>':''}</div></div>
+    <button class="sp-x" data-act="sync-hide" aria-label="Dismiss">${ic('x','i-xs')}</button></div>`;
 }
 function statusHTML(){
   if(S.mode==='loading')return `<section class="card status"><div class="st-main"><div class="sk" style="width:40px;height:40px;border-radius:11px"></div><div><div class="sk" style="width:90px;height:10px"></div><div class="sk" style="width:70px;height:16px;margin-top:6px"></div></div></div><div class="sk" style="height:14px"></div><div class="sk" style="height:6px"></div></section>`;
   const h=health();
   return `<section class="card status s-${h.lvl}" aria-live="polite"><div class="st-main"><span class="st-ic">${itile(h.icon,'lg')}</span><div><div class="st-l">Business today</div><div class="st-t"><span class="sdot ${h.lvl}"></span>${h.word}</div></div></div>
    <p class="st-text">${h.text} <b>${h.n?`${h.n} items need your attention.`:'Nothing is waiting for you.'}</b></p>
-   <div class="scale" role="img" aria-label="Status scale, now ${h.word}">${[['ok','On track'],['warn','Watch'],['crit','Critical']].map(([k,l])=>`<div class="${k} ${h.lvl===k?'on':''}"><i></i><span>${l}</span></div>`).join('')}</div>
+   <div class="scale" role="img" aria-label="Status: ${h.word}. On track means all lines running, no open alerts and revenue at 95% of target or more. Watch means a line is down, an alert is open, or revenue is under 95% of target. Critical means 2 or more lines are down.">${[['ok','On track','var(--ok)',['All lines running','No open alerts','Revenue ≥ 95% of target']],['warn','Watch','var(--warn)',['1 line down, or','An alert is open, or','Revenue < 95% of target']],['crit','Critical','var(--crit)',['2 or more lines down','Losses growing every minute']]].map(([k,l,c,rules])=>`<div class="${k} ${h.lvl===k?'on':''}" data-tip="${ttHTML(`${l}${h.lvl===k?' · now':''}`,rules.map(r=>[c,r,'',''])).replace(/<span class='tt-v [^']*'><\/span>/g,'')}"><i></i><span>${l}</span></div>`).join('')}</div>
    ${false?`<div class="st-warn" role="alert">${ic('tri','i-sm')}<span>Production data hasn't updated since 05:30. Other numbers are still usable.</span><button class="btn btn-s btn-sm" data-act="retry">Try again</button></div>`:''}</section>`;
 }
 function kpis(){
@@ -933,11 +986,11 @@ function kpis(){
    {ic:'factory',l:'Output',per:'Yesterday',v:'29,670',u:'pcs',d:['ok','check','95.7%','of target'],go:'production',
     segs:LK.map(k=>({n:PROD[k].short,v:PROD[k].a[6],c:PROD[k].c,vl:fmt(PROD[k].a[6])}))},
    {ic:'trend',l:'Revenue',per:'Nov 1–17',v:'Rp 6.58',u:'B',d:['warn','down','8%','vs target'],go:'finance',
-    segs:[['Sumber',1880,'var(--c1)'],['Maju Jaya',1210,'#8EC2FF'],['Berkah',980,'var(--c2)'],['Others',2510,'var(--c5)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
+    segs:[['Sumber',1880,'var(--c1)'],['Maju Jaya',1210,'#8EC2FF'],['Berkah',980,'var(--c4)'],['Others',2510,'var(--c5)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
    {ic:'receipt',l:'Overdue receivables',per:'As of Nov 16',stale:true,v:'Rp 486',u:'M',d:['warn','up','Rp 74M','vs last week'],go:'finance',anc:'recv',
-    segs:[['30+ days',212,'var(--crit)'],['16–30 days',86,'var(--warn)'],['1–15 days',188,'var(--c4)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
+    segs:[['30+ days',212,'var(--crit)'],['16–30 days',86,'var(--crit-2)'],['1–15 days',188,'var(--c5)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
    {ic:'box',l:'Materials at risk',per:'Today 05:00',v:'3',u:'of 6',d:['crit','oct','Peanuts 2 days',''],go:'stock',
-    segs:[['Critical',st.filter(s=>s==='crit').length,'var(--crit)'],['Watch',st.filter(s=>s==='warn').length,'var(--warn)'],['OK',st.filter(s=>s==='ok').length,'var(--ok)']].map(([n,v,c])=>({n,v,c,vl:v}))}
+    segs:[['Critical',st.filter(s=>s==='crit').length,'var(--crit)'],['Watch',st.filter(s=>s==='warn').length,'var(--crit-2)'],['OK',st.filter(s=>s==='ok').length,'var(--c5)']].map(([n,v,c])=>({n,v,c,vl:v}))}
   ];
 }
 const segTip=x=>{const t=sum(x.segs.map(s=>s.v))||1;return ttHTML(`${x.l} breakdown`,x.segs.map(s=>[s.c,`${s.n} <span class='tt-p'>${Math.round(s.v/t*100)}%</span>`,s.vl,'n']))};
@@ -980,7 +1033,7 @@ function alertItem(a){
   const pct=a.pct();
   return `<button class="al ${a.live?'live':''} ${a.fresh?'fresh':''}" data-act="alert" data-id="${a.id}" aria-label="${esc(a.title())}, ${a.impact()}. Open">
     <span class="al-top"><span class="sdot ${a.sev} ${a.live?'live':''}"></span><span class="al-t">${a.title()}</span><span class="al-v imp-${a.sev}">${a.impact()}</span></span>
-    <span class="stripe"><i class="s-${a.sev}" style="width:${pct}%"></i>${a.lim?`<span class="lim" style="left:${a.lim}%"></span>`:''}</span>
+    <span class="stripe" data-tip="${ttHTML(a.title(),[[a.sev==='crit'?'var(--crit)':'var(--warn)','Impact',a.impact(),a.sev==='crit'?'c':'w'],['transparent','Severity',`${pct}%`,'n']],esc(a.bar()))}"><i class="s-${a.sev}" style="width:${pct}%"></i>${a.lim?`<span class="lim" style="left:${a.lim}%"></span>`:''}</span>
     <span class="al-m"><span>${a.bar()}</span><span>${a.pic.n} · ${a.time}</span></span></button>`;
 }
 function alertsCardHTML(){
@@ -1029,7 +1082,9 @@ function stepTip(d){const n=tips().length;S.tipIdx=((S.tipIdx+d)%n+n)%n;refreshI
 document.addEventListener('animationend',e=>{if(!e.target.matches||!e.target.matches('.ins-prog i'))return;const now=Date.now();if(now-tipAt<1000)return;tipAt=now;stepTip(1)});
 function buddyBody(){
   const [t,n]=curTip(),last=S.convo[S.convo.length-1],mood=S.thinking?'think':(t.mood||'idle');
-  return `${insightHTML()}
+  // On track: no insight to push, just an open invitation to ask
+  const calm=health().lvl==='ok'&&!S.thinking&&S.mode!=='loading';
+  return `${calm?`<div class="sari-calm"><b>Everything's on track today.</b><p>Nothing needs you right now. Ask me anything about sales, the lines, stock or payments.</p></div>`:insightHTML()}
    ${last?`<button class="resume" data-act="open-chat">${ic('play','i-xs')}<span>Continue: <b>${esc(last.q)}</b></span>${ic('chev','i-xs')}</button>`:''}
 `;
 }
@@ -1054,7 +1109,7 @@ invLoop();
 function renderFab(){
   const f=el('fab'),[t]=curTip(),mood=S.thinking?'think':(t.mood||'idle');
   f.className=(isDesk()&&S.tab==='overview')?'fab':'fab show desk-show';
-  const showBub=S.fabTip&&!isDesk()&&!el('ov').classList.contains('open')&&S.mode!=='loading';
+  const showBub=S.fabTip&&!isDesk()&&!el('ov').classList.contains('open')&&S.mode!=='loading'&&health().lvl!=='ok';
   const inv=!showBub&&!S.noInvite&&!el('ov').classList.contains('open')&&S.mode!=='loading'&&!S.thinking;
   f.innerHTML=`${inv?invHTML():''}${showBub?`<div class="fab-bub"><button class="x" data-act="hide-tip" aria-label="Close">${ic('x','i-xs')}</button><div class="ins-tag">${ic('spark','i-xs')}Sari</div>${S.thinking?'<span class="typing"><i></i><i></i><i></i></span>':`${t.t}${t.a?`<br><button class="go" ${tipAct(t)}>${t.a}${ic('chev','i-xs')}</button>`:''}`}</div>`:''}
    <button class="fab-btn" data-act="buddy" aria-label="Open Sari assistant">${sari(50,mood,true)}</button>`;
@@ -1066,7 +1121,7 @@ function viewProduction(){
   const cards=LK.map(k=>{const l=PROD[k],L=S.lines[k],stop=isStop(k),a=l.a[6],p=a/l.t*100,rj=l.rj[6],cover=l.fg/l.sell;
     return `<section class="card lc ${sel.includes(k)?'':'dim'}"><div class="card-h">${itile(l.icon,'hl',l.tone)}<div class="ch-t"><h2>${l.p}</h2><p>${l.n} · ${l.type} · ${l.sku} · ${l.pack}</p></div>${stop?`<span class="tag t-crit"><span class="sdot crit live"></span>Stopped ${minTxt(k)}</span>`:`<span class="tag t-ok"><span class="sdot ok"></span>Running</span>`}</div>
      <div class="lc-b"><div class="mstats"><div><span>Today so far</span><b>${fmt(todayOut(k))}</b></div><div><span>Yesterday</span><b class="${p<95?'w':''}">${dec(p)}%</b></div><div><span>Downtime</span><b>${l.dt[6]} min</b></div><div><span>Rejects</span><b class="${rj>3?'w':''}">${dec(rj)}%</b></div></div>
-      <div><div class="meta" style="margin-bottom:6px"><span>Yesterday <b>${fmt(a)}</b> of ${fmt(l.t)} pcs</span><span>Target</span></div><div class="track"><i class="${p>=95?'f-ok':p>=85?'f-warn':'f-crit'}" style="width:${Math.min(100,p/105*100)}%"></i><span class="mk" style="left:${100/105*100}%"></span></div></div>
+      <div><div class="meta" style="margin-bottom:6px"><span>Yesterday <b>${fmt(a)}</b> of ${fmt(l.t)} pcs</span><span>Target</span></div><div class="track" data-tip="${ttHTML(`${l.p} · yesterday`,[[p>=95?'var(--ok)':p>=85?'var(--warn)':'var(--crit)','Made',`${fmt(a)} pcs`,'n'],['transparent','Target',`${fmt(l.t)} pcs`,'n'],['transparent','Of target',`${dec(p)}%`,p>=95?'':p>=85?'w':'c'],['transparent',a>=l.t?'Above target':'Short by',`${fmt(Math.abs(l.t-a))} pcs`,'n']])}"><i class="${p>=95?'f-ok':p>=85?'f-warn':'f-crit'}" style="width:${Math.min(100,p/105*100)}%"></i><span class="mk" style="left:${100/105*100}%"></span></div></div>
       ${stop?`<div class="stop-note">${ic('oct','i-xs')}${L.reason} · since ${L.since} · ${lossTxt(k)} lost</div>`:`<div class="meta"><span>Speed <b>${RATE[k]} pcs/min</b></span><span>Stock <b>${fmt(l.fg)} pcs</b> · ${dec(cover)} days</span></div>`}</div></section>`}).join('');
   const tg=sum(sel.map(k=>PROD[k].t));
   CH.pout=(w,h)=>stackChart(w,h,{lbl:D7.map((d,i)=>`${D7N[i]} ${d}`),tip:D7.map((d,i)=>`${D7N[i]}, Nov ${d}`),series:sel.map(k=>({n:`${PROD[k].n} · ${PROD[k].short}`,c:PROD[k].hex,v:PROD[k].a})),
@@ -1088,7 +1143,7 @@ function viewStock(){
   let list=BAHAN.filter(b=>S.sf==='all'||b.cat===S.sf);if(S.sAct)list=list.filter(b=>b.d<=7);
   const rows=list.map(b=>{const s=bst(b.d),h=b.al&&S.handled[b.al];
     return `<tr class="${s==='crit'?'hl':''}"><td><b>${b.n}</b><span class="sub">${b.sup} · ${b.use}</span></td><td class="r"><b>${b.s}</b><span class="sub">${b.u}/day</span></td>
-     <td><span class="cover"><span class="track"><i class="f-${s}" style="width:${Math.min(100,b.d/14*100)}%"></i><span class="mk" style="left:${3/14*100}%;background:var(--text-3)"></span><span class="mk" style="left:${7/14*100}%;background:var(--text-3)"></span></span><span class="tag t-${s}">${b.d} days</span></span></td>
+     <td><span class="cover"><span class="track" data-tip="${ttHTML(b.n,[[s==='crit'?'var(--crit)':s==='warn'?'var(--warn)':'var(--ok)','Cover',`${b.d} days`,s==='crit'?'c':s==='warn'?'w':'n'],['transparent','On hand',b.s,'n'],['transparent','Use per day',b.u,'n'],['transparent','Supplier lead time',`${b.lead} days`,'n']],b.d<=b.lead?'Runs out before a new delivery could arrive':b.d<7?'Under the 7-day safe level':'')}"><i class="f-${s}" style="width:${Math.min(100,b.d/14*100)}%"></i><span class="mk" style="left:${3/14*100}%;background:var(--text-3)"></span><span class="mk" style="left:${7/14*100}%;background:var(--text-3)"></span></span><span class="tag t-${s}">${b.d} days</span></span></td>
      <td class="r">${b.lead} d</td>
      <td>${b.po==='none'?`<span class="tag ${s==='crit'?'t-crit':'t-warn'}">No PO</span>`:b.po?`<span class="tag t-prog">${b.po}</span>`:'<span class="muted">—</span>'}</td>
      <td class="r">${b.al?(h?`<span class="tag t-prog">${h.pic}</span>`:`<button class="btn btn-s btn-sm" data-act="assign-open" data-id="${b.al}">Order</button>`):''}</td></tr>`}).join('')||`<tr><td colspan="7" style="padding:0">${stateBox({ill:'nomatch',title:'No items match this filter',text:'Nothing needs action in this group right now. Clear the filter to see every material.',acts:'<button class="btn btn-s btn-sm" data-act="clear-stock-filter">Show all materials</button>'})}</td></tr>`;
@@ -1100,17 +1155,17 @@ function viewStock(){
     {ic:'crit',l:'Critical stock',per:'Under 3 days',v:String(nC),u:`of ${nT}`,d:['crit','oct',crit.map(b=>b.n).join(', ')||'None',crit.length?`${crit[0].d} days left`:''],
      segs:[{n:'Critical',v:nC,c:'var(--crit)',vl:nC},{n:'Other materials',v:nT-nC,c:'var(--c5)',vl:nT-nC}]},
     {ic:'warn',l:'Watch',per:'3–7 days',v:String(nW),u:`of ${nT}`,d:['warn','tri',watch.map(b=>({'Fresh cassava':'Cassava','Balado seasoning':'Balado'}[b.n]||b.n)).join(', '),''],
-     segs:[{n:'Watch',v:nW,c:'var(--warn)',vl:nW},{n:'Other materials',v:nT-nW,c:'var(--c5)',vl:nT-nW}]},
+     segs:[{n:'Watch',v:nW,c:'var(--crit-2)',vl:nW},{n:'Other materials',v:nT-nW,c:'var(--c5)',vl:nT-nW}]},
     {ic:'truck',l:'Purchase orders',per:'Open',v:String(onWay),u:'on the way',d:['warn','tri',`${needPO} need a PO`,''],
-     segs:[{n:'On the way',v:onWay,c:'var(--c1)',vl:onWay},{n:'Still need a PO',v:needPO,c:'var(--warn)',vl:needPO}]},
+     segs:[{n:'On the way',v:onWay,c:'var(--c1)',vl:onWay},{n:'Still need a PO',v:needPO,c:'var(--crit-2)',vl:needPO}]},
     {ic:'box',l:'Finished goods',per:'Today 05:00',v:fmt(fgTot),u:'pcs',d:['ok','check','±Rp 1.6B','value'],
      segs:LK.map(k=>({n:PROD[k].short,v:PROD[k].fg,c:PROD[k].c,vl:fmt(PROD[k].fg)}))}])}
    <div class="g2"><section class="card col"><div class="card-h">${itile('box','hl')}<div class="ch-t"><h2>Materials & packaging ${infoBtn('stok')}</h2><p>Counted Nov 18, 05:00 · cover = on hand ÷ 7-day average use</p></div></div>
      <div class="col-b tbl-wrap"><table class="tbl"><thead><tr><th>Item</th><th class="r">On hand</th><th>Cover <span style="font-weight:400">(3 · 7 day marks)</span></th><th class="r">Lead</th><th>PO</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></section>
-    <div class="stack"><section class="card col" style="flex:1.15"><div class="card-h">${itile('pack','hl')}<div class="ch-t"><h2>Finished goods ${infoBtn('stok')}</h2><p>Stock vs 7-day average sales</p></div></div>
+    <div class="stack"><section class="card col" style="flex:none"><div class="card-h">${itile('pack','hl')}<div class="ch-t"><h2>Finished goods ${infoBtn('stok')}</h2><p>Stock vs 7-day average sales</p></div></div>
       <div class="col-b rows">${LK.map(k=>{const l=PROD[k],d=l.fg/l.sell,s=d<3?'warn':'ok';return `<div class="row"><span class="sw" style="background:${l.hex};width:8px;height:28px;border-radius:4px"></span><div class="n"><b>${l.p}</b><span>${l.sku} · sells ${fmt(l.sell)}/day</span></div><span class="amt">${fmt(l.fg)}</span><span class="tag t-${s}">${dec(d)} days</span></div>`}).join('')}
        ${isStop('L2')?`<div class="stop-note" style="margin:4px 0 12px">${ic('tri','i-xs')}Line 2 is stopped. Peanut cracker stock may run out Nov 20.</div>`:''}</div></section>
-     <section class="card col" style="flex:1"><div class="card-h">${itile('bag','hl')}<div class="ch-t"><h2>Reorder plan</h2><p>Suggested by Sari from usage and lead time</p></div></div>
+     <section class="card col" style="flex:1;min-height:0"><div class="card-h">${itile('bag','hl')}<div class="ch-t"><h2>Reorder plan</h2><p>Suggested by Sari from usage and lead time</p></div></div>
       <div class="col-b rows">${[['Peanuts','4.5 t','Send today','crit','a2'],['Balado seasoning','560 kg','By tomorrow','warn','a5'],['Fresh cassava','On the way','PO arrives Nov 19','prog','']].map(r=>`<div class="row"><span class="sdot ${r[3]}"></span><div class="n"><b>${r[0]}</b><span>${r[2]}</span></div><span class="amt">${r[1]}</span>${r[4]&&!S.handled[r[4]]?`<button class="btn btn-s btn-sm" data-act="assign-open" data-id="${r[4]}">Assign</button>`:r[4]?`<span class="tag t-prog">Assigned</span>`:''}</div>`).join('')}</div></section></div></div>`;
 }
 
@@ -1124,7 +1179,7 @@ function viewFinance(){
   const pct=Math.round(tot/tg*100),avg=tot/days,R=rpParts(tot),A=rpParts(avg),D=rpParts(Math.abs(prev-tot));
   const mj=dd.rows.find(r=>r[0]==='CV Maju Jaya'),mjDrop=Math.max(0,mj[3]-mj[2]),othDrop=Math.max(0,(prev-tot)-mjDrop);
   const top=dd.rows.slice(0,3),rest=sum(dd.rows.slice(3).map(r=>r[2]));
-  const short={'PT Sumber Pangan Jaya':'Sumber','CV Maju Jaya':'Maju Jaya','UD Berkah Sentosa':'Berkah'},topC=['var(--c1)','#8EC2FF','var(--c2)'];
+  const short={'PT Sumber Pangan Jaya':'Sumber','CV Maju Jaya':'Maju Jaya','UD Berkah Sentosa':'Berkah'},topC=['var(--c1)','#8EC2FF','var(--c4)'];
   return `${kpiRow([
     {ic:'trend',l:'Revenue',per:dd.lbl,v:R[0],u:R[1],d:[pct>=95?'ok':'warn',pct>=100?'check':'down',`${pct}%`,'of target'],
      segs:[...top.map((r,i)=>({n:short[r[0]]||r[0],v:r[2],c:topC[i],vl:rp(r[2])})),{n:'Others',v:rest,c:'var(--c5)',vl:rp(rest)}]},
@@ -1133,7 +1188,7 @@ function viewFinance(){
     {ic:'clock',l:'Average per day',per:'Target Rp 420M',v:A[0],u:A[1],d:[avg>=399?'ok':'warn','down',rp(Math.max(0,420-avg)),'below target'],
      segs:[{n:'Average per day',v:avg,c:'var(--c1)',vl:rp(avg)},{n:'Gap to target',v:Math.max(0,420-avg),c:'var(--c5)',vl:rp(Math.max(0,420-avg))}]},
     {ic:'receipt',l:'Overdue receivables',per:'As of Nov 16',stale:true,v:'Rp 486',u:'M',d:['warn','up','Rp 74M','vs last week'],
-     segs:[['30+ days',212,'var(--crit)'],['16–30 days',86,'var(--warn)'],['1–15 days',188,'var(--c4)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))}])}
+     segs:[['30+ days',212,'var(--crit)'],['16–30 days',86,'var(--crit-2)'],['1–15 days',188,'var(--c5)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))}])}
    <div class="fgrid">
     <section class="card col"><div class="card-h">${itile('bars','hl')}<div class="ch-t"><h2>Daily revenue ${infoBtn('sales')}</h2><p>${dd.lbl} · stacked by distributor</p></div><div class="legend" style="padding:0"><span><i class="sw" style="background:#2463EB"></i>Others</span><span><i class="sw" style="background:#8EC2FF"></i>CV Maju Jaya</span><span><i class="dash"></i>Target</span></div></div>
      <div class="chart" data-chart="fin"></div></section>
@@ -1251,11 +1306,25 @@ const ANS={
   <div class="a-act"><button class="btn btn-p btn-sm" data-act="assign-open" data-id="a2">${ic('user','i-xs')}Ask Pak Agus to order</button><button class="btn btn-s btn-sm" data-act="src" data-src="stok">Open stock</button></div>
   ${conf('hi','based on 7-day average use')}`},
  clarifyProd:{steps:['Understanding the question'],follow:[],html:()=>`<div>Which one do you mean?</div><div class="chips" style="margin-top:8px">${['Line 2 losses today','Why are Line 2 rejects up?','What should I reorder?'].map(q=>`<button data-act="ask" data-q="${q}">${q}</button>`).join('')}</div>`},
- clarify:{steps:['Understanding the question'],follow:[],html:()=>`<div>I'm not sure what you mean. Maybe one of these?</div><div class="chips" style="margin-top:8px">${PROMPTS.map(([,q])=>`<button data-act="ask" data-q="${q}">${q}</button>`).join('')}</div>${conf('lo','the question doesn\'t match data I have')}`},
+ clarify:{steps:['Reading your question'],follow:[],html:q=>{const n=(S.clarN=(S.clarN||0)+1),qq=esc(String(q||'').slice(0,60));
+   const open=[`Hmm, I don't have anything on "${qq}" yet.`,`I didn't quite catch that one.`,`That's outside what I can see right now.`][(n-1)%3];
+   const pick=suggestFor(q);
+   return `<div class="a-head">${open}</div><div class="a-p">I know Sari Rasa's sales, production lines, stock and payments. Did you mean one of these?</div><div class="chips" style="margin-top:10px">${pick.map(x=>`<button data-act="ask" data-q="${x}">${x}</button>`).join('')}</div>`}},
+ hello:{steps:['Checking this morning'],follow:['Line 2 losses today','Why is revenue down?'],html:()=>{const live=openAlerts().find(a=>a.live);
+   return `<div class="a-head">Morning, Pak Hendra.</div><div class="a-p">${live?`One thing I'd look at first: ${live.title().toLowerCase().replace(' · ',' for ')}, about ${live.impact()} so far.`:`Nothing urgent this morning. Everything is running.`} Want me to walk you through it?</div>`}},
+ thanks:{steps:['…'],follow:['What should I reorder?'],html:()=>`<div class="a-head">Anytime.</div><div class="a-p">I'll keep watching the lines and stock, and tell you as soon as something changes.</div>`},
+ help:{steps:['…'],follow:['Why is revenue down?','Who pays late?'],html:()=>`<div class="a-head">Here's what I can help with.</div><ol class="a-list"><li><b>Sales</b>: why revenue moved and which distributor caused it.</li><li><b>Production</b>: line stops, losses and reject rates.</li><li><b>Stock</b>: what runs out first and what to reorder.</li><li><b>Payments</b>: who's late and what's due next.</li></ol><div class="a-p">Every number comes with its source, so you can check it.</div>`},
+ edit:{steps:['Reading your question'],follow:['Who pays late?'],html:()=>`<div class="a-head">I can't change the numbers. I only read them.</div><div class="a-p">That keeps everything here matching the factory and finance systems. If a number looks wrong, I can show you where it comes from, or ask the owner to check it.</div><div class="a-act"><button class="btn btn-s btn-sm" data-act="src" data-src="sales">${ic('db','i-xs')}Where revenue comes from</button><button class="btn btn-s btn-sm" data-act="req-update">${ic('user','i-xs')}Ask Bu Rina to check</button></div>`},
  oos:{steps:['Understanding the question','Checking what data I have'],follow:['What should I reorder?'],html:()=>`<div class="a-head">I can't predict market prices. I only read Sari Rasa's internal data.</div><div class="a-p">I can tell you when to reorder, or how much to buy this week.</div>`},
- err:{cls:'err',steps:['Reading data'],follow:[],html:()=>`<div class="a-head">Sorry, I couldn't fetch the data (${S.mode==='offline'?'connection lost':'data server not responding'}).</div><div class="a-p">Your question is saved. The dashboard numbers are still available.</div><div class="a-act"><button class="btn btn-s btn-sm" data-act="retry-ask">${ic('refresh','i-xs')}Try again</button></div>`}
+ err:{cls:'err',steps:['Reading data'],follow:[],html:()=>`<div class="a-head">I can't reach the data right now.</div><div class="a-p">${S.mode==='offline'?`You're offline, so I'm holding on to your question. The dashboard still shows the numbers from ${S.updated}.`:`The data server isn't answering. I've kept your question; the dashboard numbers are still usable.`}</div><div class="a-act"><button class="btn btn-s btn-sm" data-act="retry-ask">${ic('refresh','i-xs')}Try again</button></div>`}
 };
-function routeQ(q){const s=q.toLowerCase();
+// closest prompts to an unclear question (falls back to the defaults)
+function suggestFor(q){const s=String(q||'').toLowerCase(),all=PROMPTS.map(([,x])=>x),hit=all.filter(x=>x.toLowerCase().split(/\W+/).some(w=>w.length>3&&s.includes(w)));return [...new Set([...hit,...all])].slice(0,3)}
+function routeQ(q){const s=q.toLowerCase().trim();
+  if(/^(hi|hello|hey|halo|hai|pagi|selamat|good (morning|afternoon|evening))\b/.test(s))return'hello';
+  if(/thank|thx|makasih|terima kasih/.test(s))return'thanks';
+  if(/what can you|help me|how do (i|you)|bisa apa|^help$/.test(s))return'help';
+  if(/(adjust|change|edit|fix|correct|modify|ubah|ganti).*(number|data|figure|angka)|(number|data).*(wrong|salah)/.test(s))return'edit';
   if(/price|weather|forecast|next month|exchange/.test(s))return'oos';
   if(/revenue|sales|omzet/.test(s))return'omzet';
   if(/due next|next week|upcoming|invoice/.test(s))return'jatuhTempo';
@@ -1268,8 +1337,8 @@ function routeQ(q){const s=q.toLowerCase();
 function chatShell(){return `<div class="grab"></div><div class="dlg-h">${avatar(S.thinking?'think':'idle')}<div class="t"><h2 id="dlgTitle">Sari</h2><div class="sub">Reads internal data only · every number shows its source</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div><div class="dlg-b" id="chatBody"><div class="thread" id="thread"></div></div><div class="dlg-f" id="chatFoot"></div>`}
 function renderChat(){
   const th=el('thread');if(!th)return;
-  th.innerHTML=S.convo.map(e=>`<div class="q">${esc(e.q)}</div><div class="a">${aiBubble(!e.done)}${e.done?`<div class="a-card ${ANS[e.key].cls||''}"><div class="a-who">Sari</div>${e.html}</div>`
-    :`<div class="a-card"><div class="a-who">Sari is checking</div><div class="think">${ANS[e.key].steps.slice(0,e.step+1).map((s,i)=>i<e.step?`<div class="done">${ic('ck','i-xs ck')}${s}</div>`:`<div><span class="spin" style="color:var(--accent)"></span>${s}…</div>`).join('')}</div></div>`}</div>`).join('');
+  th.innerHTML=S.convo.map(e=>{const fresh=e.done&&!e.shown;if(e.done)e.shown=true;return `<div class="q">${esc(e.q)}</div><div class="a">${aiBubble(!e.done)}${e.done?`<div class="a-card ${fresh?'reveal':''} ${ANS[e.key].cls||''}"><div class="a-who">Sari</div>${e.html}</div>`
+    :`<div class="a-card"><div class="a-who">Sari is looking into it</div><div class="think">${ANS[e.key].steps.slice(0,e.step+1).map((s,i)=>i<e.step?`<div class="done">${ic('ck','i-xs ck')}${s}</div>`:`<div><span class="spin" style="color:var(--accent)"></span>${s}…</div>`).join('')}</div></div>`}</div>`}).join('');
   const last=S.convo[S.convo.length-1],f=last&&last.done?ANS[last.key].follow:[];
   el('chatFoot').innerHTML=`<div class="follow">${f.length?`<div class="sec-l">Follow up</div><div class="chips">${f.map(q=>`<button data-act="ask" data-q="${q}" ${S.thinking?'disabled':''}>${q}</button>`).join('')}</div>`:''}${askForm('Ask a follow-up…')}</div>`;
   const b=el('chatBody'),qs=th.querySelectorAll('.q'),lq=qs[qs.length-1];requestAnimationFrame(()=>{b.scrollTop=lq?lq.offsetTop-8:0});
@@ -1280,7 +1349,7 @@ function ask(q){
   const key=(S.mode==='error'||S.mode==='offline')?'err':routeQ(q);
   const e={q,key,step:0,done:false};S.convo.push(e);S.lastQ=q;openChat();setThinking(true);
   const a=ANS[key];
-  const tick=()=>{if(e.step<a.steps.length-1){e.step++;renderChat();setTimeout(tick,650)}else setTimeout(()=>{e.done=true;e.html=shapeAns(a.html());setThinking(false);renderChat();if(S.queue.length)setTimeout(()=>ask(S.queue.shift()),900)},750)};
+  const tick=()=>{if(e.step<a.steps.length-1){e.step++;renderChat();setTimeout(tick,650)}else setTimeout(()=>{e.done=true;e.html=shapeAns(a.html(q));setThinking(false);renderChat();if(S.queue.length)setTimeout(()=>ask(S.queue.shift()),900)},750)};
   renderChat();setTimeout(tick,650);
 }
 function setThinking(on){S.thinking=on;const bc=el('buddyCard');if(bc)bc.outerHTML=buddyCardHTML();renderFab()}
@@ -1316,7 +1385,7 @@ function alertDlg(){
 }
 function openAlert(id,step='detail',fresh=false){
   const a=ALERTS.find(x=>x.id===id);if(!a)return;
-  if(S.handled[id]){const h=S.handled[id];toast(h.ack?'You already marked this as seen.':`Already assigned to ${h.pic}, due ${h.due}.`,'ok');return}
+  if(S.handled[id]){const h=S.handled[id];toast(h.ack?'You\'ve already marked this as seen.':`${h.pic} is already on it, due ${h.due}.`,'info');return}
   openDialog('','',{kind:'alert',id,step,due:'1h',note:'',fresh});alertDlg();
   setTimeout(()=>{const f=el('dlg').querySelector('[data-autofocus]');f&&f.focus({preventScroll:true})},60);
 }
@@ -1324,10 +1393,10 @@ function sendTask(){
   const st=S.dlg,a=ALERTS.find(x=>x.id===st.id),b=el('sendBtn');st.note=el('note').value;
   b.disabled=true;b.innerHTML='<span class="spin"></span>Sending…';
   setTimeout(()=>{
-    if(S.mode==='error'||S.mode==='offline'){b.disabled=false;b.innerHTML=`${ic('refresh','i-xs')}Try again`;toast('Task not sent. Check your connection and try again. Your note is kept.','err');return}
+    if(S.mode==='error'||S.mode==='offline'){b.disabled=false;b.innerHTML=`${ic('refresh','i-xs')}Try again`;toast('Couldn\'t send the task. Your note is saved, so try again once you\'re back online.','err');return}
     S.handled[a.id]={pic:a.pic.n,due:{'1h':clock(60),'today':'17:00','tmr':'Nov 19'}[st.due]};
     closeDialog();render();
-    toast(`Task sent to ${a.pic.n} on WhatsApp.`,'ok',{label:'Undo',fn:()=>{delete S.handled[a.id];render();toast('Assignment undone. The alert is back on the list.','ok')}});
+    toast(`Sent to ${a.pic.n} on WhatsApp.`,'ok',{label:'Undo',fn:()=>{delete S.handled[a.id];render();toast('Undone. It\'s back in Needs attention.','ok')}});
   },1000);
 }
 function allAlerts(sec){
@@ -1351,8 +1420,8 @@ function demoDlg(){
   const modes=[['normal','Normal'],['loading','Loading'],['error','Sync error'],['offline','Offline'],['clear','No alerts']];
   const body=`<div class="grab"></div><div class="dlg-h">${itile('sliders')}<div class="t"><h2 id="dlgTitle">Demo mode</h2><div class="sub">For presenting each state and flow</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div>
    <div class="dlg-b"><div class="d-l" style="margin-top:0">Data state</div><div class="dseg">${modes.map(([k,l])=>`<button class="${S.mode===k?'on':''}" data-act="mode" data-v="${k}">${l}</button>`).join('')}</div>
-    <div class="d-l">Supervisor tablet ("Line report")</div><p class="muted" style="font-size:13px;margin-bottom:8px">A supervisor taps a button on the line tablet. The alert appears here and on WhatsApp. Two lines down turns the status Critical.</p>
-    <div class="choice" style="margin-bottom:8px">${REASONS.map(r=>`<button class="${S.simReason===r?'on':''}" data-act="reason" data-v="${r}">${r}</button>`).join('')}</div>
+    <div class="d-l">Supervisor tablet ("Line report")</div><p class="muted" style="font-size:13px;margin-bottom:8px">A supervisor taps a button on the line tablet. The alert appears here and on WhatsApp. Two lines down turns the status Critical; Normal puts every line back and the status On track.</p>
+    <div class="choice" style="margin-bottom:8px"><button class="${health().lvl==='ok'?'on':''}" data-act="sim-normal">${ic('ck','i-xs')}Normal · all running</button>${REASONS.map(r=>`<button class="${S.simReason===r&&health().lvl!=='ok'?'on':''}" data-act="reason" data-v="${r}">${r}</button>`).join('')}</div>
     <div class="sim">${LK.map(k=>{const st=S.lines[k].stop;return `<div class="sim-r"><div class="n"><b>${PROD[k].n} · ${PROD[k].short}</b><span>${st?`Stopped ${minTxt(k)} · ${S.lines[k].reason}`:S.lines[k].resumed?`Running again since ${S.lines[k].resumed}`:'Running'}</span></div>${st?`<button class="btn btn-s btn-sm" data-act="sim-go" data-v="${k}">${ic('ck','i-xs')}Running again</button>`:`<button class="btn btn-sm" style="background:var(--crit);color:#fff" data-act="sim-stop" data-v="${k}">${ic('oct','i-xs')}Report stop</button>`}</div>`}).join('')}</div>
     <div class="d-l">Last WhatsApp message</div><div class="wa"><div class="wh"><span>Sari Rasa Control Room</span><span>${S.wa.t}</span></div>${S.wa.l.join('<br>')}</div>
     <div class="d-l">Assistant</div><button class="btn btn-s" data-act="demo-convo">${ic('play','i-xs')}Play 2 sample questions</button>
@@ -1360,7 +1429,7 @@ function demoDlg(){
   if(S.dlg&&S.dlg.kind==='demo')el('dlg').innerHTML=body;else openDialog(body,'',{kind:'demo'});
 }
 function simStop(k){
-  const since=clock(),n=PROD[k].n,reason=S.simReason;
+  const since=clock(),n=PROD[k].n,reason=S.simReason;S.onTarget=false;
   S.lines[k]={stop:true,since,base:0,t:Date.now(),reason,prev:S.lines[k].prev||0};
   const id='m'+k+Date.now();
   const a={id,sev:'crit',live:true,fresh:true,line:k,area:'Production',title:()=>`${n} stopped · ${lineMin(k)?lineMin(k)+' min':'just now'}`,impact:()=>lossTxt(k),
@@ -1372,24 +1441,50 @@ function simStop(k){
   S.tipIdx=0;S.fabTip=true;tuck();if(S.mode==='clear')S.mode='normal';
   closeDialog();render();setTimeout(()=>openAlert(id,'detail',true),400);
 }
+// Normal: every line running, no open alerts, revenue on target -> status On track
+function simNormal(){const now=clock();
+  for(let i=ALERTS.length-1;i>=0;i--)if(ALERTS[i].live)ALERTS.splice(i,1);
+  LK.forEach(k=>{if(S.lines[k].stop)S.lines[k]={stop:false,resumed:now,prev:(S.lines[k].prev||0)+lineMin(k)}});
+  S.mode='clear';S.onTarget=true;S.tipIdx=0;
+  S.wa={t:now,l:[`All lines running (${now})`,'No open alerts','Revenue on target']};
+  render();demoDlg();toast('Everything is back to normal. Status is On track.','ok');
+}
 function simGo(k){
   const n=PROD[k].n,mins=lineMin(k),loss=lossOf(k),now=clock();
   for(let i=ALERTS.length-1;i>=0;i--)if(ALERTS[i].line===k&&ALERTS[i].live){delete S.handled[ALERTS[i].id];ALERTS.splice(i,1)}
   S.lines[k]={stop:false,resumed:now,prev:(S.lines[k].prev||0)+mins};
   S.wa={t:now,l:[`${n} running again (${now})`,`Stopped for ${mins} min`,`Estimated loss ±Rp ${loss}M`]};
-  render();demoDlg();toast(`${n} is running again. Alert closed.`,'ok');
+  render();demoDlg();toast(`Good news: ${n} is running again. I\'ve closed the alert.`,'ok');
 }
 
 /* ================= Toast ================= */
 function toast(msg,type='ok',action){
   const w=el('toasts'),t=document.createElement('div');t.className='toast '+type;t.setAttribute('role',type==='err'?'alert':'status');
-  t.innerHTML=`<span class="ti">${ic(type==='err'?'tri':'check','i-sm')}</span><span>${msg}</span>${action?`<button>${action.label}</button>`:''}`;
+  t.innerHTML=`<span class="ti">${ic(type==='err'?'tri':type==='info'?'info':'check','i-sm')}</span><span class="tm">${msg}</span>${action?`<button>${action.label}</button>`:''}`;
   w.appendChild(t);const kill=()=>{t.classList.add('out');setTimeout(()=>t.remove(),200)};
   if(action)t.querySelector('button').onclick=()=>{action.fn();kill()};
   setTimeout(kill,action?5000:3500);
 }
 
 /* ================= Routing & render ================= */
+/* Mobile: swipe left/right to move between tabs. The page follows the finger; release past ~22% of the
+   width (or with a quick flick) to change tab, otherwise it springs back. Rubber-band at the first/last tab. */
+(function(){const v=el('view');let sx=0,sy=0,st=0,dx=0,axis=null,on=false,lastX=0,lastT=0,vel=0;
+  const scrollsX=n=>{for(;n&&n!==v;n=n.parentElement){if(n.matches&&n.matches('input,textarea,select,.seg,[data-tip]'))return true;const cs=getComputedStyle(n);if(/(auto|scroll)/.test(cs.overflowX)&&n.scrollWidth>n.clientWidth+2)return true}return false};
+  const idx=()=>TABS.findIndex(x=>x[0]===S.tab);
+  const set=(x,anim)=>{v.style.transition=anim?'transform .26s cubic-bezier(.22,1,.36,1),opacity .26s ease':'none';v.style.transform=x?`translate3d(${x}px,0,0)`:'';v.style.opacity=x?String(1-Math.min(.35,Math.abs(x)/innerWidth*.6)):''};
+  v.addEventListener('touchstart',e=>{on=false;if(isDesk()||e.touches.length!==1||el('ov').classList.contains('open')||scrollsX(e.target))return;
+    const t=e.touches[0];sx=lastX=t.clientX;sy=t.clientY;st=lastT=Date.now();dx=0;vel=0;axis=null;on=true},{passive:true});
+  v.addEventListener('touchmove',e=>{if(!on)return;const t=e.touches[0],mx=t.clientX-sx,my=t.clientY-sy;
+    if(!axis){if(Math.abs(mx)<8&&Math.abs(my)<8)return;axis=Math.abs(mx)>Math.abs(my)*1.2?'x':'y';if(axis==='y'){on=false;return}}
+    const i=idx(),edge=(mx>0&&i===0)||(mx<0&&i===TABS.length-1);dx=edge?mx*.25:mx;
+    const now=Date.now();vel=(t.clientX-lastX)/Math.max(1,now-lastT);lastX=t.clientX;lastT=now;set(dx,false)},{passive:true});
+  const end=()=>{if(!on)return;on=false;if(axis!=='x'){set(0,true);return}
+    const i=idx(),dir=dx<0?1:-1,j=i+dir,far=Math.abs(dx)>innerWidth*.22||(Math.abs(dx)>40&&Math.abs(vel)>.45&&Math.sign(vel)===Math.sign(dx));
+    if(j<0||j>=TABS.length||!far){set(0,true);setTimeout(()=>{v.style.transition=''},280);return}
+    set(-dir*innerWidth*.6,true);setTimeout(()=>{S.swipeDir=dir>0?'l':'r';v.style.transition='none';v.style.transform='';v.style.opacity='';go(TABS[j][0])},170)};
+  v.addEventListener('touchend',end,{passive:true});v.addEventListener('touchcancel',()=>{if(on){on=false;set(0,true)}},{passive:true});
+})();
 function go(tab,anc){location.hash=tab;if(anc)setTimeout(()=>{const a=el(anc);a&&a.scrollIntoView({block:'nearest',behavior:'smooth'})},150)}
 function route(){const h=location.hash.slice(1);const t=TABS.some(x=>x[0]===h)?h:'overview';if(t!=='finance')S.aiFilter=false;S.tab=t;render(true)}
 /* Loading skeletons: same grid + card structure as each tab, so nothing jumps when data arrives */
@@ -1401,7 +1496,7 @@ const skMinis=()=>`<div class="minis">${[1,2,3,4].map(()=>`<div class="card mini
 const skLineCard=()=>`<section class="card lc">${skHead()}<div class="sk-lc"><div class="sk" style="height:54px;border-radius:10px"></div><div class="sk" style="height:10px;width:70%"></div><div class="sk" style="height:8px"></div><div class="sk" style="height:10px;width:55%"></div></div></section>`;
 const SKEL={
   production:()=>`<div class="lines">${skLineCard()+skLineCard()+skLineCard()}</div><div class="g2">${skChart()}${skChart()}</div>`,
-  stock:()=>`${skKpis()}<div class="g2">${skList(6)}<div class="stack">${skList(3,'','flex:1.15')}${skList(3,'','flex:1')}</div></div>`,
+  stock:()=>`${skKpis()}<div class="g2">${skList(6)}<div class="stack">${skList(3,'','flex:none')}${skList(3,'','flex:1')}</div></div>`,
   finance:()=>`${skKpis()}<div class="fgrid">${skChart()}${skList(5)}${skList(7,'r2')}</div>`
 };
 function render(anim=true){
@@ -1411,6 +1506,10 @@ function render(anim=true){
   else if(S.mode==='loading')v.innerHTML=SKEL[S.tab]();
   else v.innerHTML=`${syncBanner()}<div class="view-in" style="display:contents">${{production:viewProduction,stock:viewStock,finance:viewFinance}[S.tab]()}</div>`;
   if(anim)v.firstElementChild&&v.classList.add('enter');
+  v.classList.remove('swipe-l','swipe-r');if(S.swipeDir){void v.offsetWidth;v.classList.add('swipe-'+S.swipeDir);S.swipeDir=null;scrollTo({top:0})}
+  renderSyncPop();
+  // offline: content goes grayscale and is blocked (inert) so nobody acts on stale numbers
+  const off=S.mode==='offline';v.classList.toggle('is-offline',off);v.inert=off;const fb=el('fab');if(fb){fb.classList.toggle('is-offline',off);fb.inert=off}
   requestAnimationFrame(()=>{drawCharts();document.querySelectorAll('.prompts').forEach(updPrompts)});
   renderFab();
   el('demoBtn').innerHTML=ic('sliders','i-sm');
@@ -1432,8 +1531,8 @@ document.addEventListener('click',e=>{
     case'assign-back':S.dlg.note=el('note').value;S.dlg.step='detail';alertDlg();break;
     case'due':S.dlg.due=t.dataset.v;S.dlg.note=el('note').value;alertDlg();break;
     case'send-task':sendTask();break;
-    case'ack':{const a=ALERTS.find(x=>x.id===S.dlg.id);S.handled[a.id]={pic:a.pic.n,ack:true};closeDialog();render();toast('Marked as seen. It moved to "In progress".','ok',{label:'Undo',fn:()=>{delete S.handled[a.id];render()}});break}
-    case'wa':toast(`In the real app this opens WhatsApp with ${t.dataset.n}.`,'ok');break;
+    case'ack':{const a=ALERTS.find(x=>x.id===S.dlg.id);S.handled[a.id]={pic:a.pic.n,ack:true};closeDialog();render();toast('Marked as seen. You\'ll find it under In progress.','ok',{label:'Undo',fn:()=>{delete S.handled[a.id];render()}});break}
+    case'wa':toast(`This would open a WhatsApp chat with ${t.dataset.n}. Not available in the demo.`,'info');break;
     case'undo':delete S.handled[t.dataset.id];render();allAlerts('handled');break;
     case'all-alerts':allAlerts(t.dataset.sec);break;
     case'close':closeDialog();break;
@@ -1464,15 +1563,17 @@ document.addEventListener('click',e=>{
     case'fp':S.fp=t.dataset.v;render();break;
     case'clear-ai':S.aiFilter=false;render();break;
     case'info':openInfo(t.dataset.k);break;
-    case'export':toast('Export is available in the production app. This prototype does not download files.','ok');break;
-    case'req-update':toast('Update request sent to Bu Rina.','ok');break;
+    case'export':toast('Export isn\'t available in this demo. In the live app, the file downloads right away.','info');break;
+    case'req-update':toast('Asked Bu Rina to sync the finance data. I\'ll update the numbers when it arrives.','ok');break;
     case'refresh':refresh();break;
-    case'retry':refresh('normal');setTimeout(()=>toast('Data updated.','ok'),950);break;
+    case'retry':refresh('normal');setTimeout(()=>toast(`All up to date as of ${S.updated}.`,'ok'),950);break;
     case'demo':demoDlg();break;
-    case'mode':S.mode=t.dataset.v;S.tipIdx=0;S.fabTip=true;render();demoDlg();if(S.mode==='loading')setTimeout(()=>{S.mode='normal';render();if(S.dlg&&S.dlg.kind==='demo')demoDlg()},1500);break;
+    case'mode':S.mode=t.dataset.v;S.onTarget=false;S.syncHide=null;S.tipIdx=0;S.fabTip=true;render();demoDlg();if(S.mode==='loading')setTimeout(()=>{S.mode='normal';render();if(S.dlg&&S.dlg.kind==='demo')demoDlg()},1500);break;
     case'reason':S.simReason=t.dataset.v;demoDlg();break;
     case'sim-stop':simStop(t.dataset.v);break;
     case'sim-go':simGo(t.dataset.v);break;
+    case'sim-normal':simNormal();break;
+    case'sync-hide':S.syncHide=S.mode;renderSyncPop();break;
     case'demo-convo':closeDialog();ask('Why is revenue down?');S.queue.push('Who pays late?');break;
   }
 });
