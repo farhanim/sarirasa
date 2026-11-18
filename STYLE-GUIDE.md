@@ -3,7 +3,7 @@
 Version 4.0 · 19 Nov 2026 · source of truth: [index.html](index.html) (CSS tokens at the top of the file)
 
 v4 follows the WareHub reference more closely:
-- **Navigation:** four tabs on one page.
+- **Navigation:** four line tabs on one page (icon + label, icons hidden under 440px; no container; 1px `line-2` rule under the bar, active tab in `accent-ink` with a 2px `accent` underline).
 - **Fit:** every tab fits one desktop screen.
 - **Color:** neutral icon tiles, with blue charts in the reference style.
 - **Patterns:** striped progress bars and segmented bars.
@@ -19,7 +19,7 @@ The user is Pak Hendra, 52, who checks his phone at 06:30 and needs three answer
 1. **One screen, no hunting.** On desktop every tab fits the viewport (tested at 1440×900 and 1366×768). Long lists scroll inside their card, never the page.
 2. **Quiet chrome, meaningful color.**
    - Icons sit on neutral gray tiles.
-   - Color is reserved for status (green / orange / red / purple) and for data (blue chart steps).
+   - Color is reserved for status (green / orange / red / purple) and for data: each data series gets its own hue (blue `#2463EB`, teal `#14B8A6`, violet `#8B5CF6`, amber `#F5A524`, slate `#CBD5E1` for "others"). CV Maju Jaya is always light blue (`#8EC2FF`); production lines are always Line 1 blue, Line 2 teal, Line 3 violet. Receivables aging uses blue → amber → orange → red by lateness.
    - The primary action is the only Azure button.
 3. **One component pattern.** Every card is *neutral icon tile + title + one control on the right* (info, filter or action).
 4. **Monitoring density.** More data per card, shown with small type and visual patterns (segmented bars, striped bars, stacked charts) rather than big text.
@@ -33,14 +33,14 @@ The user is Pak Hendra, 52, who checks his phone at 06:30 and needs three answer
 
 | Name | Token | Hex | Use |
 |---|---|---|---|
-| Midnight Velvet | `ink` | `#01040C` | Text, logo, selected tab, target line and label, toast |
+| Midnight Velvet | `ink` | `#01040C` | Text, target line and label, toast |
 | Ivory Lace | `card` | `#FFFFFF` | Cards, dialogs |
 | Moonlit Gray | `bg` | `#F5F5F5` | Page |
 | — | `tile` | `#F4F5F7` | **Icon tile background** (neutral) |
 | — | `raised` | `#F7F8FA` | Table header, hover, impact boxes |
 | — | `line` / `line-2` | `#ECECEE` / `#E1E2E6` | Borders / control outlines |
 | — | `text-2` / `text-3` | `#4F5562` / `#626875` | Secondary / meta text |
-| Azure Dream | `accent-2` → `accent` | `#609FFF` → `#2463EB` | Primary button gradient, send button, user chat bubble, Sari's headset |
+| Azure Dream | `accent-2` → `accent` | `#609FFF` → `#2463EB` | Primary button gradient, send button, user chat bubble, Sari's AI sparkles, Fugodash Surya logo arch (`#609FFF` → `#1A4FC9`) and sun (`#2463EB`) |
 | — | `accent-soft` / `accent-line` | `#EEF4FF` / `#D7E5FF` | Sari's surfaces, segmented-control selection, "From Sari" filter chip |
 
 ### 2.2 Chart categories: one hue, four steps (reference style)
@@ -101,13 +101,13 @@ Status always comes as a dot or bar **plus** a word.
 ## 4. Layout & spacing
 
 - **Spacing (4 grid):** 4 · 8 · 12 · 16 · 20 · 24 · 32. Card padding 16, gap between cards 12, page margin 32 (16 on mobile).
-- **Radius:** 6 for tags, 8 for small controls, 9 / 11 for icon tiles, 10 for buttons, 12 for alert items / inputs / tabs track, 14 for the insight panel, 16 for cards, 20 for dialogs.
+- **Radius:** 6 for tags, 8 for small controls, 9 / 11 for icon tiles, 10 for buttons, 12 for alert items / inputs, 14 for the insight panel, 16 for cards, 20 for dialogs.
 - **Shadows:** cards `0 1px 2px` + `0 6px 16px` at 3.5–4%, always with a 1px border. Floating layers use `sh-3`.
 
 **Desktop shell (≥ 1024 wide, ≥ 700 tall):** `100dvh` with no page scroll.
 
 ```
-Top bar ............ logo · greeting · date | freshness · refresh · bell(count)
+Top bar ............ logo · Fugodash Surya / for PT Sari Rasa Nusantara | [greeting · date · freshness] · refresh · bell(count)
 Tab bar ............ [Overview | Production | Stock | Finance] ...... filters for this tab
 View (fills rest) .. tab content; cards stretch, lists scroll inside
 ```
@@ -127,7 +127,11 @@ View (fills rest) .. tab content; cards stretch, lists scroll inside
 
 **Lucide** (ISC), stroke 1.6, sizes 18 / 16 / 14.
 
-**Icon tile:** 32×32 (28 small, 40 large), radius 9, `tile` gray background, 1px `line` inset, icon in `text-2`. Icon tiles are never colored. Status is carried by dots, bars and tags next to them.
+**Icon tile:** 32×32 (28 small, 40 large), radius 9, `tile` gray background, 1px `line` inset, icon in `text-2`. Status is carried by dots, bars and tags next to them.
+
+**Highlight tile (`itile(name,'hl')`):** card headers, KPI cards and summary tiles show a custom colored duotone icon (22px) on its own, with no tile, border or shadow (`DUO` map in `index.html`). **Icon color:** duotone icons are blue by default on every tab. Only critical data is highlighted (`itile(name,'hl','crit')` → red): Materials at risk on Overview, the revenue drop tile on Finance. Stock's Critical / Watch tiles use their own red / orange icons because the tile *is* the state. Products, finance and headers otherwise stay blue. Summary tiles on every tab use the same frameless icon; status tiles (Critical / Watch on Stock) color it red / orange instead of blue. Status icons in lists stay neutral; the one exception is the "Business today" icon, which is tinted by state (green / orange / red) with a ping ring and a state motion: gentle bob (On track), sway (Watch), quick shake + faster ping (Critical). The sparkle icon is reserved for Sari / AI surfaces only; data cards (e.g. Reorder plan) use a data icon even when Sari produced the numbers. Sari's titles (side card, phone sheet, chat window) use the peanut avatar, whose face follows the current insight and which plays the idle loop. The AI sparkle (`aiBubble()`) marks Sari's content: the insight box and each chat answer, pulsing while Sari is working. The floating button keeps the peanut.
+
+**Bar charts:** wide stacked bars (~78% of the slot), rounded top corners, 4px white gap between segments, no value labels on the bars. Totals, % of target and annotations live in the hover/tap tooltip; hovering a day dims the others.
 
 | Use | Icon |
 |---|---|
@@ -199,7 +203,7 @@ The whole card is a button to the matching tab.
 - Tapping an item opens the alert modal: details, then **Assign to …**, then due time, note and **Send task**.
 
 ### 7.4 Sari card (Overview, desktop)
-- **Header:** avatar, "Sari · Your assistant", green **Online** pill.
+- **Header:** AI sparkle, "Sari · AI assistant · reads factory data". No online/status pill: Sari is an AI assistant, not a help desk.
 - **Insight panel:** `accent-soft` with the dot-grid pattern. Sari (70px) sits in the left corner, cut off by the bottom edge. Right of her: "✦ Insight for you" + 1/3 pager, then one sentence, then a primary small button. While thinking, three bouncing dots replace the text.
 - **"Ask Sari" prompt cards:** a 2×2 grid, each card 48px tall with a neutral icon tile and a short question.
 - **Footer:** "Continue: …" row and the input (text · mic · send).
@@ -239,9 +243,9 @@ The whole card is a button to the matching tab.
 
 Unchanged from v3: [assets/sari.svg](assets/sari.svg).
 
-- **Character:** flat two-tone peanut (`#DE9A45` shade, `#F6C67E` base) with an Azure headset, a waving hand on hover, and 4 moods (idle, think, worry, happy).
+- **Character:** flat two-tone peanut (`#DE9A45` shade, `#F6C67E` base) with Azure AI sparkles by the head (they twinkle while thinking), a waving hand on hover, and 4 moods (idle, think, worry, happy). No headset.
 - **Avatar:** head crop (viewBox `14 4 68 54`) in a 32px `accent-soft` square.
-- **FAB:** 60px, radius 18, with a green online dot.
+- **FAB:** 60px, radius 18, no status dot.
 
 Sari is the only element on the screen with a warm illustration color.
 
@@ -274,12 +278,12 @@ The interface is in English and addresses Pak Hendra as "you". It's short, about
 
 | v3 | v4 |
 |---|---|
-| Blue icon tiles | Neutral gray tiles; color only for status and data |
+| Status icons in blue tiles | Neutral tiles for status icons; highlight tiles only for card-header icons |
 | Laporan button opening a separate page | 4 tabs on the same page, filters in the tab bar |
 | Desktop could scroll | Every tab fits one screen |
 | KPI: number + single bar | Number + delta + segmented bar + 2-column legend |
 | Alert list with Assign buttons | Compact items with a striped impact bar; assign inside the modal |
-| Sari stage with a speech bubble + chip suggestions | Insight panel with a dot grid + 2×2 prompt cards + Online pill |
+| Sari stage with a speech bubble + chip suggestions | Insight panel with a dot grid + 2×2 prompt cards, or an Online pill / headset (help-desk look) |
 | Simple bars | Stacked blue bars by distributor or line, target pill, event annotation, tooltip card |
 | Light detail tabs | Production: product, SKU, live output, rejects chart. Stock: supplier, lead time, PO, reorder plan. Finance: distributors, aging, overdue, upcoming |
 | Bahasa Indonesia | English |

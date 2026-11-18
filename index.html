@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5F5F5">
-<title>Sari Rasa Control Room</title>
+<meta name="application-name" content="Fugodash Surya">
+<title>Fugodash Surya · PT Sari Rasa Nusantara</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="alternate icon" href="assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
@@ -15,8 +19,8 @@
   --line:#ECECEE;--line-2:#E1E2E6;
   --text:#01040C;--text-2:#4F5562;--text-3:#626875;
   --accent:#2463EB;--accent-2:#609FFF;--accent-ink:#1A4FC9;--accent-soft:#EEF4FF;--accent-line:#D7E5FF;
-  /* chart categories: one hue, three steps (reference) */
-  --c1:#1E4FD8;--c2:#4F8BFF;--c3:#A9CBFF;--c4:#DCE8FF;
+  /* chart categories: one distinct hue per data series */
+  --c1:#2463EB;--c2:#14B8A6;--c3:#8B5CF6;--c4:#F5A524;--c5:#CBD5E1;
   --ok:#2FB86E;--ok-soft:#EAF8F0;--ok-ink:#15803D;
   --warn:#F07B3F;--warn-soft:#FEF1E9;--warn-ink:#B4471A;
   --crit:#EF4444;--crit-soft:#FDEDED;--crit-ink:#B42318;
@@ -24,7 +28,7 @@
   --fs-cap:12px;--lh-cap:16px;--fs-sm:13px;--lh-sm:18px;--fs-body:14px;--lh-body:20px;
   --fs-title:15px;--lh-title:22px;--fs-h:20px;--lh-h:28px;--fs-fig:26px;--lh-fig:32px;
   --sh-1:0 1px 2px rgba(1,4,12,.04);
-  --sh-2:0 1px 2px rgba(1,4,12,.04),0 6px 16px rgba(1,4,12,.035);
+  --sh-2:0 1px 2px rgba(1,4,12,.03);
   --sh-3:0 24px 48px rgba(1,4,12,.14),0 2px 6px rgba(1,4,12,.06);
   --ease:cubic-bezier(.22,1,.36,1);
 }
@@ -81,6 +85,26 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .itile{width:32px;height:32px;border-radius:9px;background:var(--tile);color:var(--text-2);display:grid;place-items:center;flex:none;box-shadow:inset 0 0 0 1px var(--line)}
 .itile.sm{width:28px;height:28px;border-radius:8px}
 .itile.lg{width:40px;height:40px;border-radius:11px}
+/* highlight tile: custom duotone icon for card headers */
+.itile.hl{width:24px;height:var(--lh-title);border-radius:0;background:none;box-shadow:none;color:var(--accent);overflow:visible}
+.itile.hl.lg{width:22px;height:26px}
+/* stroke icons inside frameless tiles (status tiles): same visual size as the duotone icons */
+.itile.hl svg.i{width:22px;height:22px;stroke-width:2}
+/* header icons sit on the title line (same visual size as the 15px title), not centered on title + subtitle */
+.mini>.itile.hl{align-self:flex-start}
+/* card headers (title + subtitle): bigger icon, centered on both lines; widgets (KPI, minis) keep the small title-line icon */
+.card-h>.itile.hl{align-self:center;width:32px;height:32px}
+.card-h>.itile.hl .duo,.card-h>.itile.hl svg.i{width:30px;height:30px}
+.card-h:has(>.itile.hl){gap:12px}
+.itile.ai.busy .duo,.ai-b.busy .duo{animation:aiPulse 1.2s ease-in-out infinite}
+.avatar.ai-b{place-items:center;background:none;box-shadow:none;overflow:visible}
+.ai-b .duo{width:28px;height:28px;display:block}
+@keyframes aiPulse{50%{transform:scale(.82) rotate(12deg);opacity:.7}}
+.itile .duo{width:24px;height:24px;display:block}
+/* siren: rays blink like a rotating light */
+.duo .ray{animation:sirenRay 1.2s steps(1) infinite}
+@keyframes sirenRay{0%,100%{opacity:1}50%{opacity:.15}}
+.itile.lg .duo{width:22px;height:22px}
 .sdot{width:8px;height:8px;border-radius:50%;flex:none;display:inline-block}
 .sdot.ok{background:var(--ok)}.sdot.warn{background:var(--warn)}.sdot.crit{background:var(--crit)}.sdot.prog{background:var(--prog)}
 .sdot.live{animation:pulse 1.8s infinite}
@@ -95,19 +119,33 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .d-ok{color:var(--ok-ink)}.d-warn{color:var(--warn-ink)}.d-crit{color:var(--crit-ink)}
 
 /* ============ Top bar & tabs ============ */
-.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:12px}
-.top-l{display:flex;align-items:center;gap:12px;min-width:0}
-.logo{width:36px;height:36px;border-radius:10px;background:var(--ink);color:#fff;font-weight:600;font-size:var(--fs-sm);display:grid;place-items:center;flex:none}
-.top h1{font-size:var(--fs-h);line-height:var(--lh-h);font-weight:500;letter-spacing:-.01em}
-.top .sub{font-size:var(--fs-sm);line-height:var(--lh-sm);color:var(--text-2)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:12px;padding-bottom:10px}
+.top-l{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:32px;height:32px;border-radius:9px;display:block;flex:none}
+.logo img{width:32px;height:32px;display:block;border-radius:9px}
+.brand{min-width:0}
+.brand h1{font-size:var(--fs-title);line-height:18px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.brand p{font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand p .warn{color:var(--warn-ink)}
+.pill-meta.greet{gap:10px;color:var(--text-2)}
+.pill-meta.greet b{font-weight:500;color:var(--text)}
+.pill-meta.greet .sep{width:1px;height:14px;background:var(--line-2)}
+.pill-meta.greet .st{display:inline-flex;align-items:center;gap:6px}
+.pill-meta.greet .st.warn{color:var(--warn-ink)}
 .top-r{display:flex;gap:8px;align-items:center}
 .pill-meta{height:36px;padding:0 12px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2);display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--text-2);white-space:nowrap}
 .pill-meta.warn{color:var(--warn-ink);background:var(--warn-soft);box-shadow:inset 0 0 0 1px rgba(240,123,63,.3)}
-.tabbar{display:flex;align-items:center;gap:12px;padding-bottom:12px}
-.tabs{display:inline-flex;background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2),var(--sh-1);border-radius:12px;padding:4px;gap:2px;flex:none}
-.tabs button{height:32px;padding:0 14px;border-radius:8px;font-weight:500;color:var(--text-2);display:flex;align-items:center;gap:8px;white-space:nowrap;transition:background-color .15s,color .15s}
-.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
-@media (hover:hover){.tabs button[aria-selected=false]:hover{background:var(--raised);color:var(--text)}}
+/* line tabs: no container, 1px rule across the bar, 2px accent underline on the active tab */
+.tabbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;background:linear-gradient(var(--line-2),var(--line-2)) no-repeat;background-origin:content-box;background-clip:content-box;background-size:100% 1px;background-position:bottom}
+.tabs{display:flex;gap:28px;flex:none}
+.tabs button{position:relative;height:42px;padding:0;font-weight:500;color:var(--text-2);display:flex;align-items:center;gap:8px;white-space:nowrap;transition:color .15s}
+/* icons too narrow for 4 tabs on small phones */
+@media (max-width:440px){.tabs button svg{display:none}}
+.tabs button::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px 2px 0 0;background:var(--accent);transform:scaleX(0);transition:transform .2s var(--ease)}
+.tabs button[aria-selected=true]{color:var(--accent-ink)}
+.tabs button[aria-selected=true]::after{transform:none}
+.tabs button:focus-visible{outline-offset:-2px;border-radius:6px}
+@media (hover:hover){.tabs button[aria-selected=false]:hover{color:var(--text)}}
 .tools{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 
 /* ============ Card ============ */
@@ -134,7 +172,26 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .st-main{display:flex;align-items:center;gap:12px}
 .st-l{font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
 .st-t{font-size:var(--fs-title);line-height:var(--lh-title);font-weight:600;display:flex;align-items:center;gap:8px}
-.s-ok .st-t{color:var(--ok-ink)}.s-warn .st-t{color:var(--warn-ink)}.s-crit .st-t{color:var(--crit-ink)}
+.s-ok .st-t{color:var(--ok-ink)}
+/* card tint: state color on the left fading to white */
+.status{--tint:var(--warn-soft);--edge:rgba(240,123,63,.22);background:linear-gradient(90deg,var(--tint) 0%,color-mix(in srgb,var(--tint) 45%,#fff) 22%,#fff 50%);border-color:var(--edge)}
+.status.s-ok{--tint:var(--ok-soft);--edge:rgba(47,184,110,.22)}.status.s-crit{--tint:var(--crit-soft);--edge:rgba(239,68,68,.24)}
+/* status icon: tinted by state, with a ping ring and a small state-specific motion */
+.st-ic{position:relative;flex:none;display:grid;--c:var(--warn);--soft:var(--warn-soft)}
+.s-ok .st-ic{--c:var(--ok);--soft:var(--ok-soft)}.s-crit .st-ic{--c:var(--crit);--soft:var(--crit-soft)}
+.st-ic .itile{background:none;box-shadow:none;color:var(--c);transition:scale .2s var(--ease)}
+.st-ic svg{width:26px;height:26px;stroke-width:1.9;transform-origin:50% 60%}
+.st-ic::after{content:'';position:absolute;inset:2px;border-radius:50%;border:2px solid var(--c);opacity:0;pointer-events:none;animation:stPing 2.8s ease-out infinite}
+.s-warn .st-ic svg{animation:stSway 2.8s ease-in-out infinite}
+.s-crit .st-ic::after{animation-duration:1.4s}
+.s-crit .st-ic svg{animation:stShake 1.4s ease-in-out infinite}
+.s-ok .st-ic::after{animation-duration:4s}
+.s-ok .st-ic svg{animation:stBob 4s ease-in-out infinite}
+@media (hover:hover){.status:hover .st-ic .itile{scale:1.08}}
+@keyframes stPing{0%{opacity:.55;transform:scale(1)}70%,100%{opacity:0;transform:scale(1.35)}}
+@keyframes stSway{0%,60%,100%{transform:none}70%{transform:rotate(-10deg)}80%{transform:rotate(8deg)}90%{transform:rotate(-4deg)}}
+@keyframes stShake{0%,50%,100%{transform:none}60%{transform:translateX(-1.5px) rotate(-6deg)}70%{transform:translateX(1.5px) rotate(6deg)}80%{transform:translateX(-1px)}90%{transform:translateX(1px)}}
+@keyframes stBob{0%,100%{transform:none}50%{transform:translateY(-1.5px)}}.s-warn .st-t{color:var(--warn-ink)}.s-crit .st-t{color:var(--crit-ink)}
 .st-text{color:var(--text-2);border-left:1px solid var(--line);padding-left:20px}
 .st-text b{color:var(--text);font-weight:500}
 .scale{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
@@ -149,14 +206,24 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;flex:none}
 .kpi{padding:14px 16px;display:flex;flex-direction:column;gap:12px;text-align:left;transition:border-color .15s,box-shadow .15s,scale .15s ease-out}
 .kpi:active{scale:.985}
-@media (hover:hover){.kpi:hover{border-color:var(--line-2);box-shadow:var(--sh-3)}}
-.kpi-h{display:flex;align-items:center;gap:10px;font-weight:500}
-.kpi-h .per{margin-left:auto;font-size:var(--fs-cap);color:var(--text-3);font-weight:400;white-space:nowrap}
+@media (hover:hover){button.kpi:hover{border-color:var(--line-2);box-shadow:var(--sh-3)}}
+.static-kpi:active{scale:1}
+.kpi-h{display:flex;align-items:center;gap:10px;font-weight:500;min-width:0}
+.kpi-l{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-h .per{margin-left:auto;padding-left:8px;font-size:var(--fs-cap);color:var(--text-3);font-weight:400;white-space:nowrap}
 .kpi-h .per.stale{color:var(--warn-ink);font-weight:500}
 .kpi-vr{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .fig{font-size:var(--fs-fig);line-height:var(--lh-fig);font-weight:500;letter-spacing:-.02em;white-space:nowrap}
 .fig small{font-size:var(--fs-body);color:var(--text-2);font-weight:400;margin-left:3px;letter-spacing:0}
 .segbar{display:flex;gap:3px;height:10px}
+.segbar-hit{display:block;padding:6px 0;margin:-6px 0;cursor:help}
+@media (hover:hover){.kpi:hover .segbar i{filter:saturate(1.1)}}
+.tt-p{color:var(--text-3);font-size:var(--fs-cap);margin-left:2px}
+.tt-n{display:flex;gap:6px;align-items:flex-start;margin-top:8px;padding:6px 8px;border-radius:8px;background:var(--crit-soft);color:var(--crit-ink);font-size:var(--fs-cap);line-height:var(--lh-cap);font-weight:500}
+.al-more{width:100%;height:32px;border-radius:10px;color:var(--text-2);font-size:var(--fs-sm);font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:background-color .15s}
+@media (hover:hover){.al-more:hover{background:var(--raised);color:var(--text)}}
+.al-more svg{transition:rotate .2s var(--ease)}.al-more.open svg{rotate:-90deg}
+.al-more:not(.open) svg{rotate:90deg}
 .segbar i{display:block;height:100%;border-radius:4px;min-width:6px;transform-origin:left;animation:grow .7s var(--ease) both}
 .leg2{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-2)}
 .leg2 span{display:flex;align-items:center;gap:6px;min-width:0}
@@ -182,11 +249,18 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .tt-v.w{background:var(--warn-soft);color:var(--warn-ink)}.tt-v.c{background:var(--crit-soft);color:var(--crit-ink)}.tt-v.n{background:var(--tile);color:var(--text-2)}
 
 /* Needs attention (striped progress, reference pattern) */
-.al-list{display:grid;gap:8px;padding:0 16px 4px;align-content:start}
-.al{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);transition:background-color .15s,border-color .15s}
-.al.live{border-color:rgba(239,68,68,.32);background:linear-gradient(180deg,#FFFAFA,var(--card))}
-@media (hover:hover){.al:hover{border-color:var(--line-2);background:var(--raised)}}
+.al-list{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:0 16px 4px;align-content:start}
+.al{display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-radius:12px;background:var(--raised);transition:background-color .15s}
+.al.live{background:#FFF5F5}
+@media (hover:hover){.al:hover{background:#EFF1F4}.al.live:hover{background:#FDECEC}}
 .al.fresh{animation:flash 2s ease}
+/* Needs attention card: a light runs around the card border while alerts are open (red if any is critical) */
+.card.attn{position:relative;isolation:isolate;--c:var(--warn);--cs:rgba(240,123,63,.18)}
+.card.attn.attn-crit{--c:var(--crit);--cs:rgba(239,68,68,.18)}
+.card.attn::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:2px;pointer-events:none;z-index:2;
+  background:conic-gradient(from var(--fa),var(--cs) 0deg,var(--cs) 220deg,var(--c) 330deg,var(--cs) 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  animation:fabRing 3.2s linear infinite}
 .al-top{display:flex;align-items:center;gap:8px}
 .al-t{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .al-v{font-weight:600;white-space:nowrap}
@@ -197,7 +271,7 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .stripe .s-warn{background:repeating-linear-gradient(90deg,var(--warn) 0 3px,transparent 3px 5px)}
 .stripe .lim{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);border-radius:1px}
 .al-m{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
-.al-m span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.al-m span:first-child{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .al-m span:last-child{white-space:nowrap;color:var(--text-2)}
 .empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:28px 20px}
 .empty b{font-weight:500}.empty p{font-size:var(--fs-sm);color:var(--text-2);max-width:300px}
@@ -205,26 +279,79 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 /* ============ Sari ============ */
 .sari{display:block;flex:none;overflow:visible}
 .sari .hand{transform-box:fill-box;transform-origin:20% 90%}
+.sari .ai-spark path{transform-box:fill-box;transform-origin:center}
+.sari.think .ai-spark path{animation:twinkle 1.1s ease-in-out infinite}
+.sari .bod,.sari .eyes,.sari .blink{transform-box:fill-box;transform-origin:center}
+.sari .bod{transform-origin:50% 100%}
+/* 7s loop: ~2.5s of play, then ~4.5s rest. Only on the insight avatar, FAB and the large sheet mascot. */
+:is(.fab-btn,.dlg-h .avatar,.card-h .avatar) .sari:not(.think) .ai-spark .s1{animation:sparkPop 7s var(--ease) infinite}
+:is(.fab-btn,.dlg-h .avatar,.card-h .avatar) .sari:not(.think) .ai-spark .s2{animation:sparkTw 7s ease-in-out infinite .15s}
+:is(.fab-btn,.dlg-h .avatar,.card-h .avatar) .sari:not(.think) .ai-spark .s3{animation:sparkTw 7s ease-in-out infinite .3s}
+:is(.fab-btn,.dlg-h .avatar,.card-h .avatar) .sari:not(.think) .eyes{animation:eyeLook 7s var(--ease) infinite}
+:is(.fab-btn,.dlg-h .avatar,.card-h .avatar) .sari:not(.think) .blink{animation:blink 7s ease-in-out infinite}
+:is(.fab-btn,.dlg-h .avatar,.card-h .avatar) .sari:not(.think) .bod{animation:hop 7s var(--ease) infinite}
+@keyframes eyeLook{0%,4%,30%,100%{transform:none}9%,26%{transform:translate(1.6px,-1.8px)}}
+@keyframes sparkPop{0%,10%,40%,100%{transform:none}16%{transform:scale(1.4) rotate(45deg)}24%{transform:scale(.9) rotate(90deg)}30%{transform:scale(1) rotate(90deg)}}
+@keyframes sparkTw{0%,12%,36%,100%{transform:none;opacity:1}18%{transform:scale(1.5);opacity:1}26%{transform:scale(.5);opacity:.4}}
+@keyframes hop{0%,14%,30%,100%{transform:none}19%{transform:translateY(-2.5px) scaleY(1.03)}24%{transform:translateY(0) scaleY(.97)}}
+@keyframes blink{0%,33%,37%,100%{transform:none}35%{transform:scaleY(.1)}}
+.sari.think .ai-spark path:nth-child(2){animation-delay:.2s}.sari.think .ai-spark path:nth-child(3){animation-delay:.4s}
+@keyframes twinkle{50%{transform:scale(.6) rotate(20deg);opacity:.6}}
 @media (hover:hover){.fab-btn:hover .hand,.insight:hover .hand{animation:wave .8s var(--ease) 2}}
 .avatar{width:32px;height:32px;border-radius:10px;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line);display:grid;place-items:end center;overflow:hidden;flex:none}
-.online{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-cap);color:var(--ok-ink);font-weight:500;padding:3px 8px;border-radius:999px;background:var(--ok-soft)}
-.online i{width:6px;height:6px;border-radius:50%;background:var(--ok)}
-.buddy-b{padding:0 16px;display:flex;flex-direction:column;gap:12px}
-.insight{position:relative;border-radius:14px;padding:12px 12px 12px 92px;min-height:132px;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line);overflow:hidden;isolation:isolate}
+.buddy-b{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+.insight{position:relative;border-radius:14px;padding:12px 14px 16px;min-height:0;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line);overflow:hidden;isolation:isolate}
 .insight::before{content:'';position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(36,99,235,.16) 1px,transparent 1.2px);background-size:12px 12px;mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%)}
-.insight .sari{position:absolute;left:10px;bottom:-12px}
-.ins-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+/* Sari card: tinted, patterned surface so the assistant reads as its own thing */
+#buddyCard{position:relative;isolation:isolate;border-color:var(--accent-line);background:radial-gradient(90% 55% at 100% 0%,rgba(96,159,255,.30),transparent 70%),linear-gradient(180deg,#EAF2FF 0%,#F4F8FF 40%,#FFFFFF 78%)}
+#buddyCard::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;background-image:radial-gradient(rgba(36,99,235,.20) 1px,transparent 1.3px);background-size:14px 14px;-webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 35%,transparent 62%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 35%,transparent 62%)}
+#buddyCard .insight{background:var(--card);box-shadow:inset 0 0 0 1px var(--accent-line),0 1px 3px rgba(36,99,235,.08)}
+#buddyCard .insight::before{display:none}
+#buddyCard .ins-av{background:var(--accent-soft)}
+.ins-av{width:32px;height:32px;border-radius:50%;background:var(--card);box-shadow:inset 0 0 0 1px var(--accent-line);display:grid;place-items:end center;overflow:hidden;flex:none}
+.ins-top .ins-tag{margin-right:auto}
+.ins-ctl{display:inline-flex;align-items:center;gap:2px;height:26px;padding:0 2px;border-radius:8px;background:var(--card);box-shadow:inset 0 0 0 1px var(--accent-line)}
+.ins-ctl button{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:var(--text-2);position:relative}
+.ins-ctl button::after{content:'';position:absolute;inset:-5px -1px}
+@media (hover:hover){.ins-ctl button:hover{background:var(--accent-soft);color:var(--accent-ink)}}
+.ins-ctl button[data-act=pause-tip]{margin-left:2px;box-shadow:-1px 0 0 var(--accent-line);border-radius:0 6px 6px 0}
+.ins-n{font-size:var(--fs-cap);color:var(--text-2);min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
+svg.flip{transform:scaleX(-1)}
+.ins-body{animation:insIn .35s var(--ease) both}
+@keyframes insIn{from{opacity:0;transform:translateX(10px)}}
+.ins-prog{position:absolute;left:14px;right:14px;bottom:7px;height:2px;border-radius:2px;background:rgba(36,99,235,.12);overflow:hidden}
+.ins-prog i{display:block;height:100%;background:var(--accent-2);transform-origin:left;animation:insProg linear both}
+@keyframes insProg{from{transform:scaleX(0)}}
+.insight:hover .ins-prog i,.insight:focus-within .ins-prog i,.insight.paused .ins-prog i{animation-play-state:paused}
+.insight.paused .ins-prog{opacity:.5}
+.ins-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .ins-tag{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-cap);font-weight:600;color:var(--accent-ink)}
 .next{display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-cap);color:var(--text-2);height:24px;padding:0 6px;border-radius:6px;background:var(--card);box-shadow:inset 0 0 0 1px var(--accent-line)}
 .ins-t{font-weight:500}
-.insight .btn{margin-top:10px}
+.insight .btn{margin-top:12px}
 .typing{display:inline-flex;gap:4px;padding:8px 0}
 .typing i{width:7px;height:7px;border-radius:50%;background:var(--accent-2);animation:dot 1s infinite}
 .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
 .sec-l{font-size:var(--fs-sm);line-height:var(--lh-sm);font-weight:500;color:var(--text-2)}
-.prompts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.prompt{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:var(--fs-sm);line-height:var(--lh-sm);font-weight:500;text-align:left;transition:border-color .15s,background-color .15s}
+/* one row, scrolls sideways; shade + arrow hint at hidden chips */
+.prompts-wrap{position:relative}
+.prompts{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding-bottom:2px}
+.prompts-wrap::before,.prompts-wrap::after{content:'';position:absolute;top:-2px;bottom:0;width:72px;pointer-events:none;z-index:1;transition:opacity .2s}
+.prompts-wrap::after{right:0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85) 55%,#fff);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 50%);mask-image:linear-gradient(90deg,transparent,#000 50%)}
+.prompts-wrap::before{left:0;width:40px;background:linear-gradient(270deg,rgba(255,255,255,0),#fff);opacity:0}
+.prompts-wrap.scrolled::before{opacity:1}
+.prompts-wrap.end::after{opacity:0}
+.prompts-more{position:absolute;right:4px;top:50%;translate:0 -50%;z-index:2;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--text-2);box-shadow:inset 0 0 0 1px var(--line-2),0 2px 8px rgba(1,4,12,.12);transition:opacity .2s,scale .15s ease-out}
+.prompts-more:active{scale:.92}
+.prompts-wrap.end .prompts-more{opacity:0;pointer-events:none}
+.prompts::-webkit-scrollbar{display:none}
+.ask-b{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+#buddyCard .prompts-wrap{margin:0 -16px}
+#buddyCard .prompts{padding-left:16px;padding-right:16px;scroll-padding:0 16px}
+#buddyCard .prompts-more{right:12px}
+.prompt{flex:none;scroll-snap-align:start;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 10px;border-radius:999px;white-space:nowrap;color:var(--text);border:1px solid var(--line);background:var(--card);font-size:var(--fs-sm);line-height:var(--lh-sm);font-weight:500;text-align:left;transition:border-color .15s,background-color .15s}
 @media (hover:hover){.prompt:hover{border-color:var(--accent-line);background:var(--accent-soft)}}
+.prompt svg{color:var(--text-2)}
 .prompt:disabled{opacity:.5;cursor:not-allowed}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chips button{min-height:32px;padding:6px 12px;border-radius:999px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2);font-size:var(--fs-sm);font-weight:500;text-align:left;transition:background-color .15s}
@@ -247,13 +374,27 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 /* FAB */
 .fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:40;display:none;align-items:flex-end;gap:10px}
 .fab.show{display:flex}
-.fab-btn{width:60px;height:60px;border-radius:18px;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line),var(--sh-3);display:grid;place-items:end center;flex:none;position:relative;transition:scale .15s ease-out}
+.fab-btn{width:60px;height:60px;border-radius:18px;background:radial-gradient(120% 90% at 80% 0%,#DCE8FF 0%,#F4F8FF 55%,#FFFFFF 100%);box-shadow:var(--sh-3),0 0 0 4px rgba(96,159,255,.10);display:grid;place-items:end center;flex:none;position:relative;isolation:isolate;transition:scale .15s ease-out}
+.fab-btn::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:2px;z-index:-1;background:conic-gradient(from var(--fa,0deg),#609FFF,#8B5CF6,#14B8A6,#2463EB,#609FFF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:fabRing 6s linear infinite}
+.fab-btn::after{content:'';position:absolute;inset:-6px;border-radius:22px;border:2px solid rgba(96,159,255,.45);opacity:0;animation:fabPing 7s ease-out infinite;pointer-events:none}
+@property --fa{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes fabRing{to{--fa:360deg}}
+@keyframes fabPing{0%,12%{opacity:0;transform:scale(.9)}16%{opacity:1}34%,100%{opacity:0;transform:scale(1.18)}}
 .fab-btn:active{scale:.94}
-.fab-btn .dot{position:absolute;top:-3px;right:-3px;width:13px;height:13px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px var(--bg)}
+.fab-btn .sari{overflow:hidden;border-radius:0 0 16px 16px}
 .fab-bub{position:relative;max-width:240px;background:var(--card);border-radius:14px 14px 4px 14px;box-shadow:var(--sh-3);border:1px solid var(--line);padding:10px 30px 10px 12px;font-size:var(--fs-sm);line-height:var(--lh-sm);text-align:left;margin-bottom:8px;animation:rise .35s var(--ease) both}
 .fab-bub .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--text-3)}
 .fab-bub .go{display:inline-flex;align-items:center;gap:2px;margin-top:6px;color:var(--accent);font-weight:600}
 .fab-bub .ins-tag{display:flex;margin-bottom:2px}
+.fab-inv{position:relative;margin-bottom:12px;opacity:0;transform:translateY(8px) scale(.94);transform-origin:bottom right;pointer-events:none;transition:opacity .25s,transform .35s var(--ease)}
+.fab-inv.typing,.fab-inv.on{opacity:1;transform:none;pointer-events:auto}
+.inv-b{display:flex;align-items:center;gap:6px;min-height:36px;padding:8px 12px;border-radius:14px 14px 4px 14px;background:var(--card);border:1px solid var(--accent-line);box-shadow:var(--sh-3);font-size:var(--fs-sm);line-height:var(--lh-sm);font-weight:500;color:var(--text);text-align:left;max-width:min(260px,calc(100vw - 150px))}
+.inv-b svg{color:var(--accent);flex:none}
+.inv-b .typing{padding:4px 2px}
+.fab-inv.on .inv-b span{animation:fade .3s ease both}
+.fab-inv .x{position:absolute;top:-8px;left:-8px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--text-3);box-shadow:inset 0 0 0 1px var(--line-2),var(--sh-1);opacity:0;transition:opacity .15s}
+.fab-inv.on .x{opacity:1}
+.fab-inv .x::after{content:'';position:absolute;inset:-8px}
 
 /* ============ Production / Stock / Finance ============ */
 .lines{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;flex:none}
@@ -363,14 +504,16 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .cmp-r .tr{height:6px;background:var(--tile);border-radius:99px;overflow:hidden}
 .cmp-r .tr i{display:block;height:100%;border-radius:99px}
 .cmp-r b{color:var(--text);font-weight:500}
-.a-src{margin-top:10px}
-.a-src > span{font-size:var(--fs-cap);color:var(--text-3);font-weight:500}
-.src-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
-.src{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:4px 10px;border-radius:8px;background:var(--tile);box-shadow:inset 0 0 0 1px var(--line);font-size:var(--fs-cap);font-weight:500;color:var(--text-2);transition:background-color .15s}
-.src.stale{color:var(--warn-ink);background:var(--warn-soft);box-shadow:none}
-@media (hover:hover){.src:hover{background:var(--accent-soft);color:var(--accent-ink)}}
-.a-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.conf{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:var(--fs-cap);color:var(--text-2)}
+.a-act{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.a-meta{margin-top:14px;padding:10px 12px;border-radius:12px;background:var(--raised);box-shadow:inset 0 0 0 1px var(--line);display:grid;gap:8px}
+.a-src{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:start;padding-top:8px;border-top:1px solid var(--line)}
+.a-src > span{font-size:var(--fs-cap);line-height:22px;color:var(--text-3);font-weight:500}
+.src-row{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.src{display:inline-flex;align-items:center;gap:6px;min-height:22px;padding:0;font-size:var(--fs-cap);font-weight:500;color:var(--text-2);border-radius:4px;text-align:left}
+.src svg{color:var(--text-3)}
+.src.stale,.src.stale svg{color:var(--warn-ink)}
+@media (hover:hover){.src:hover{color:var(--accent-ink);text-decoration:underline;text-underline-offset:3px}.src:hover svg{color:var(--accent-ink)}}
+.conf{display:flex;align-items:center;gap:8px;font-size:var(--fs-cap);line-height:18px;color:var(--text-2)}
 .conf b{color:var(--text);font-weight:600}
 .meter{display:inline-flex;gap:2px}
 .meter i{width:4px;height:12px;border-radius:2px;background:var(--line-2)}
@@ -383,6 +526,13 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 
 /* Skeleton, toast, demo */
 .sk{background:linear-gradient(90deg,var(--raised) 25%,#ECEDF0 50%,var(--raised) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:8px}
+.sk-leg{display:flex;gap:14px;padding:0 16px 8px}.sk-leg span{width:72px;height:10px}
+.sk-chart{flex:1;min-height:180px;display:flex;align-items:flex-end;gap:14px;padding:8px 16px 18px 52px}
+.sk-chart i{flex:1;border-radius:10px 10px 4px 4px}
+.sk-rows{display:grid;padding:0 16px 12px}
+.sk-rows>div{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.sk-rows span{flex:1;display:block}.sk-rows i{display:block}
+.sk-lc{display:grid;gap:12px;padding:0 16px 16px}
 .toasts{position:fixed;left:50%;bottom:24px;translate:-50% 0;display:grid;gap:8px;z-index:80;width:min(440px,calc(100vw - 32px))}
 .toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#F5F5F5;border-radius:12px;padding:10px 12px 10px 14px;box-shadow:var(--sh-3);animation:rise .3s var(--ease) both}
 .toast.ok .ti{color:#5BE39A}.toast.err .ti{color:#FF9B9B}
@@ -414,6 +564,8 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 @keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-18deg)}}
 @keyframes dot{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
 .gy{transform-box:fill-box;transform-origin:bottom;animation:growY .55s var(--ease) both}
+.seg{transition:opacity .15s}
+@media (hover:hover){.chart svg:has(.bcol:hover) .bcol:not(:hover) .seg{opacity:.4}}
 .enter > *{animation:rise .35s var(--ease) both}
 .enter > *:nth-child(2){animation-delay:.04s}.enter > *:nth-child(3){animation-delay:.08s}
 
@@ -421,18 +573,27 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 @media (max-width:1023px){
   :root{--fs-fig:22px;--lh-fig:28px;--fs-h:18px;--lh-h:26px}
   .wrap{padding:0 16px}
-  .top{padding-top:14px;padding-bottom:10px}
+  .top{padding-top:10px;padding-bottom:8px}
   .pill-meta,.lbl-d{display:none}
   .lbl-m{display:inline}
-  .tabbar{position:sticky;top:0;z-index:30;background:var(--bg);padding-top:6px;flex-wrap:wrap}
-  .tabs{width:100%;display:grid;grid-template-columns:repeat(4,1fr)}
-  .tabs button{justify-content:center;padding:0 6px}
-  .tabs button svg{display:none}
+  .tabbar{position:sticky;top:0;z-index:30;background:var(--bg);padding-top:2px;padding-bottom:10px;margin-bottom:4px;flex-wrap:wrap}
+  .tabs{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:0;box-shadow:inset 0 -1px 0 var(--line-2)}
+  .tabs button{justify-content:center;padding:0 4px}
+  .tools:empty{display:none}
   .tools{margin-left:0;width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}
   .status{grid-template-columns:1fr;gap:8px}
   .st-text{border-left:0;padding-left:0}
   .kpis,.minis{grid-template-columns:repeat(2,minmax(0,1fr))}
   .kpi{gap:10px;padding:12px}
+  .card-h{flex-wrap:wrap}
+  .card-h>.legend{flex-basis:100%;padding:0 0 0 42px!important}
+  .card-h h2{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+  .lc .card-h{align-items:flex-start}
+  .mini{padding:10px 12px;gap:0}
+  .mini .itile{display:none}
+  .mini .ch-t b small{display:block;margin-left:0;font-size:var(--fs-cap);line-height:var(--lh-cap)}
+  .tools{flex-wrap:wrap;overflow:visible;row-gap:8px}
+  .fab-bub{max-width:min(240px,calc(100vw - 150px))}
   .kpi .leg2,.kpi-h .per{display:none}
   .ov-bottom,.g2,.fgrid,.lines{grid-template-columns:1fr;grid-template-rows:none}
   .fgrid .r2{grid-row:auto;grid-column:auto}
@@ -453,7 +614,7 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
   .ask input,textarea{font-size:16px}
 }
 @media (min-width:1024px){.fab.desk-show{display:flex}}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media (prefers-reduced-motion:reduce){.ins-prog i{animation:none!important}*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -487,7 +648,10 @@ const P={
   box:'<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
   wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
   wifioff:'<path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 13a10 10 0 0 1 5.24-2.76M2 2l20 20"/>',
-  play:'<path d="m6 3 14 9-14 9V3z"/>',
+  pack:'<path d="M6 4h12l-.8 2.5c1.1 3.6 1.1 7.4 0 11L18 20H6l.8-2.5c-1.1-3.6-1.1-7.4 0-11Z"/><path d="M6.8 6.5h10.4M6.8 17.5h10.4"/><rect x="9" y="9.5" width="6" height="5" rx="1.5"/>',
+  tag:'<path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
+  snack:'<rect x="5" y="2.5" width="14" height="3.5" rx="1"/><rect x="5" y="18" width="14" height="3.5" rx="1"/><path d="M6.5 6c-1.3 4-1.3 8 0 12M17.5 6c1.3 4 1.3 8 0 12"/><circle cx="12" cy="12" r="2.6"/><path d="M8 4.25h.01M11 4.25h.01M14 4.25h.01M16.5 4.25h.01"/>',
+  play:'<path d="m6 3 14 9-14 9V3z"/>',pause:'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
   eye:'<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>',
   bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   trend:'<path d="M22 7 13.5 15.5l-5-5L2 17"/><path d="M16 7h6v6"/>',
@@ -508,10 +672,41 @@ const dec=(n,d=1)=>n.toFixed(d);
 const rp=m=>m>=1000?`Rp ${(m/1000).toFixed(2)}B`:`Rp ${fmt(m)}M`;
 const sum=a=>a.reduce((x,y)=>x+y,0);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const itile=(n,c='')=>`<span class="itile ${c}">${ic(n,'i-sm')}</span>`;
+const DUO={
+  bars:'<rect x="3" y="12" width="4.6" height="9" rx="1.6" fill="#A9CBFF"/><rect x="9.7" y="4" width="4.6" height="17" rx="1.6" fill="#2463EB"/><rect x="16.4" y="8" width="4.6" height="13" rx="1.6" fill="#609FFF"/>',
+  trend:'<rect x="2" y="3" width="20" height="18" rx="5" fill="#2463EB"/><path d="M6 15.5l4-4 3 3 5-5V21H6Z" fill="#609FFF"/><path d="m6 15.5 4-4 3 3 5-5M15 9.5h3v3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+  factory:'<path d="M2 21V10l6 3.5V10l6 3.5V4.5A1.5 1.5 0 0 1 15.5 3h3A1.5 1.5 0 0 1 20 4.5V21Z" fill="#2463EB"/><path d="M14 7.5h6" stroke="#609FFF" stroke-width="2"/><rect x="5" y="16" width="3" height="2.6" rx=".7" fill="#fff"/><rect x="10.5" y="16" width="3" height="2.6" rx=".7" fill="#fff"/><rect x="16" y="16" width="2" height="2.6" rx=".7" fill="#fff"/>',
+  receipt:'<path d="M5 2.5h14a1 1 0 0 1 1 1V22l-3-2-2.5 2-2.5-2-2.5 2L7 20l-3 2V3.5a1 1 0 0 1 1-1Z" fill="#2463EB"/><path d="M5 2.5h7v17.6L9.5 22 7 20l-3 2V3.5a1 1 0 0 1 1-1Z" fill="#609FFF"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>',
+  box:'<path d="M12 2 21 6.5v11L12 22 3 17.5v-11Z" fill="#2463EB"/><path d="M12 2 21 6.5 12 11 3 6.5Z" fill="#609FFF"/><path d="m7.5 4.3 9 4.5v3" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>',
+  bell:'<path d="M12 2.5a6 6 0 0 0-6 6c0 5-2.5 7-2.5 7h17s-2.5-2-2.5-7a6 6 0 0 0-6-6Z" fill="#2463EB"/><path d="M9.4 18.5a2.6 2.6 0 0 0 5.2 0Z" fill="#609FFF"/><circle cx="17" cy="5.5" r="3" fill="#EF4444" stroke="#fff" stroke-width="1.5"/>',
+  spark:'<defs><linearGradient id="aiG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#609FFF"/><stop offset="1" stop-color="#1A4FC9"/></linearGradient></defs><path d="M11 2.5c.7 5 2.5 6.8 7.5 7.5-5 .7-6.8 2.5-7.5 7.5-.7-5-2.5-6.8-7.5-7.5 5-.7 6.8-2.5 7.5-7.5Z" fill="url(#aiG)"/><path d="M19 14.5c.3 2 1 2.7 3 3-2 .3-2.7 1-3 3-.3-2-1-2.7-3-3 2-.3 2.7-1 3-3Z" fill="#609FFF"/><path d="M5 2.5c.2 1.2.6 1.6 1.8 1.8C5.6 4.5 5.2 4.9 5 6.1 4.8 4.9 4.4 4.5 3.2 4.3 4.4 4.1 4.8 3.7 5 2.5Z" fill="#A9CBFF"/>',
+  gauge:'<path d="M2.5 16a9.5 9.5 0 0 1 19 0v1.5A1.5 1.5 0 0 1 20 19H4a1.5 1.5 0 0 1-1.5-1.5Z" fill="#2463EB"/><path d="m12 15 4-5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15" r="2" fill="#fff"/>',
+  clock:'<circle cx="12" cy="12" r="10" fill="#2463EB"/><path d="M12 2a10 10 0 0 0 0 20Z" fill="#609FFF"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="12" cy="12" r="1.3" fill="#fff"/>',
+  truck:'<rect x="1.5" y="5" width="13" height="11" rx="2" fill="#2463EB"/><path d="M14.5 9H18l4 4v3h-7.5Z" fill="#609FFF"/><circle cx="6.5" cy="17.5" r="2.5" fill="#1A4FC9" stroke="#fff" stroke-width="1.5"/><circle cx="17.5" cy="17.5" r="2.5" fill="#1A4FC9" stroke="#fff" stroke-width="1.5"/>',
+  pack:'<path d="M6 4.5h12l-.6 2.2c1.1 3.4 1.1 7.2 0 10.6l.6 2.2H6l.6-2.2c-1.1-3.4-1.1-7.2 0-10.6Z" fill="#2463EB"/><path d="M6 4.5h12l-.6 2.2H6.6Zm0 15 .6-2.2h10.8l.6 2.2Z" fill="#609FFF"/><rect x="8.6" y="9.4" width="6.8" height="5.2" rx="1.6" fill="#fff"/><circle cx="12" cy="12" r="1.3" fill="#F5A524"/>',
+  crit:'<path d="M7.9 2h8.2L22 7.9v8.2L16.1 22H7.9L2 16.1V7.9Z" fill="#EF4444"/><path d="M7.9 2H12v20H7.9L2 16.1V7.9Z" fill="#F87171"/><rect x="10.8" y="6.5" width="2.4" height="7.6" rx="1.2" fill="#fff"/><circle cx="12" cy="17" r="1.4" fill="#fff"/>',
+  warn:'<path d="M10.3 3.4a2 2 0 0 1 3.4 0l8.1 14.2a2 2 0 0 1-1.7 3H3.9a2 2 0 0 1-1.7-3Z" fill="#F07B3F"/><path d="M10.3 3.4A2 2 0 0 1 12 2.4v18.2H3.9a2 2 0 0 1-1.7-3Z" fill="#F7A072"/><rect x="10.8" y="8" width="2.4" height="6.6" rx="1.2" fill="#fff"/><circle cx="12" cy="17.2" r="1.35" fill="#fff"/>',
+  chips:'<ellipse cx="14.5" cy="9" rx="7" ry="4.8" transform="rotate(-25 14.5 9)" fill="#609FFF"/><path d="M3.4 15.6c1-4.2 5-7 9.3-6.3 3.4.6 4.6 3.6 3.2 6.4-1.5 3.2-5.6 5.4-9.2 4.6-2.5-.6-3.8-2.4-3.3-4.7Z" fill="#2463EB"/><circle cx="7.8" cy="14.6" r="1" fill="#fff"/><circle cx="11.4" cy="13" r=".9" fill="#fff"/><circle cx="10" cy="17.4" r=".9" fill="#fff"/>',
+  peanut:'<g transform="rotate(-35 12 12)"><circle cx="12" cy="7.8" r="5.4" fill="#2463EB"/><circle cx="12" cy="16.2" r="5.4" fill="#2463EB"/><rect x="8.2" y="8" width="7.6" height="8" fill="#2463EB"/><ellipse cx="10.4" cy="6.6" rx="2.2" ry="2.8" fill="#609FFF"/><ellipse cx="10.4" cy="15" rx="2.2" ry="2.8" fill="#609FFF"/><circle cx="14" cy="9.5" r=".9" fill="#fff"/><circle cx="13.6" cy="18" r=".9" fill="#fff"/><circle cx="14.6" cy="13.3" r=".8" fill="#fff"/></g>',
+  macaroni:'<g transform="translate(-2.5 -2.5)"><path d="M7 20A13 13 0 0 1 20 7v6.5a6.5 6.5 0 0 0-6.5 6.5Z" fill="#2463EB"/><path d="M14 17.5 8 15M15.4 15.4l-4.6-4.6M17.5 14 15 8" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/><ellipse cx="10.25" cy="20" rx="3.25" ry="1.3" fill="#609FFF"/><ellipse cx="20" cy="10.25" rx="1.3" ry="3.25" fill="#609FFF"/></g>',
+  reject:'<path d="M4 3.5h11l-.6 2c1 3.2 1 6.8 0 10l.6 2H4l.6-2c-1-3.2-1-6.8 0-10Z" fill="#609FFF"/><path d="M4 3.5h11l-.6 2H4.6Zm0 14 .6-2h9.8l.6 2Z" fill="#A9CBFF"/><circle cx="16.5" cy="16.5" r="5.5" fill="#2463EB" stroke="#fff" stroke-width="1.5"/><path d="m14.6 14.6 3.8 3.8m0-3.8-3.8 3.8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>',
+  siren:'<g class="ray"><path d="M12 1.6v2.2M4.3 4.8l1.5 1.5M19.7 4.8l-1.5 1.5M2 11.2h2.1M22 11.2h-2.1" stroke="#F87171" stroke-width="1.8" stroke-linecap="round"/></g><path d="M6.2 17v-4.6a5.8 5.8 0 0 1 11.6 0V17Z" fill="#EF4444"/><path d="M8.9 16.9v-4.4a3.1 3.1 0 0 1 3.1-3.1" stroke="#FCA5A5" stroke-width="1.9" fill="none" stroke-linecap="round"/><rect x="3.6" y="16.6" width="16.8" height="4.4" rx="1.6" fill="#334155"/><rect x="5.4" y="18.2" width="13.2" height="1.2" rx=".6" fill="#64748B"/>',
+  bag:'<path d="M5.2 6.6A1.6 1.6 0 0 1 6.8 5h10.4a1.6 1.6 0 0 1 1.6 1.6L20 19.4A1.6 1.6 0 0 1 18.4 21H5.6A1.6 1.6 0 0 1 4 19.4Z" fill="#2463EB"/><path d="M5.1 8h13.8" stroke="#609FFF" stroke-width="1.6"/><path d="M8.8 11a3.2 3.2 0 0 0 6.4 0" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="8.8" cy="11" r="1.2" fill="#fff"/><circle cx="15.2" cy="11" r="1.2" fill="#fff"/>',
+  store:'<path d="M3.5 3h17l1.5 6H2Z" fill="#609FFF"/><path d="M3.5 9h17v10.5A1.5 1.5 0 0 1 19 21H5a1.5 1.5 0 0 1-1.5-1.5Z" fill="#2463EB"/><path d="M9.5 21v-5.5h5V21" fill="#fff"/>'
+};
+// highlight tone for duotone icons: swaps the blue palette (main / light / dark / pale); used only for critical data
+// blue is the standard; only critical data is highlighted. teal / violet exist only so product icons match their chart legend.
+const TONES={crit:['#EF4444','#F87171','#B91C1C','#FCA5A5'],teal:['#14B8A6','#5EEAD4','#0F766E','#99F6E4'],violet:['#8B5CF6','#C4B5FD','#6D28D9','#DDD6FE']};
+const tone=(svg,t)=>{if(!TONES[t])return svg;const[m,l,d,p]=TONES[t];return svg.replaceAll('#2463EB',m).replaceAll('#609FFF',l).replaceAll('#1A4FC9',d).replaceAll('#A9CBFF',p)};
+const lvl=(v,t)=>v>=t*.95?'ok':v>=t*.85?'warn':'crit';
+const itile=(n,c='',t='')=>`<span class="itile ${c}">${/\bhl\b/.test(c)&&DUO[n]?`<svg class="duo" viewBox="0 0 24 24" aria-hidden="true">${tone(DUO[n],t).replaceAll('aiG','aiG'+(++sariN))}</svg>`:ic(n,'i-sm')}</span>`;
 
-/* ================= Mascot: Sari (peanut + headset), flat two-tone ================= */
+/* ================= Mascot: Sari (peanut + AI sparkles), flat two-tone ================= */
+// four-point AI sparkle centred on (cx,cy) with radius r
+const star=(cx,cy,r)=>`M${cx} ${cy-r}Q${cx} ${cy} ${cx+r} ${cy}Q${cx} ${cy} ${cx} ${cy+r}Q${cx} ${cy} ${cx-r} ${cy}Q${cx} ${cy} ${cx} ${cy-r}Z`;
+let sariN=0;
 function sari(size=72,mood='idle',head=false){
+  const gid='sariAI'+(++sariN);
   const k='#1B1206',ey=mood==='think'?31:33;
   const eyes=mood==='happy'
     ?`<path d="M38 33.5q3.5-4.5 7 0M51 33.5q3.5-4.5 7 0" stroke="${k}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
@@ -519,26 +714,27 @@ function sari(size=72,mood='idle',head=false){
   const mouth={idle:`<path d="M44.5 41.5q3.5 3.4 7 0" stroke="${k}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`,
     happy:`<path d="M43.5 40.5q4.5 6.5 9 0z" fill="${k}"/>`,think:`<ellipse cx="50.5" cy="42.5" rx="2" ry="2.3" fill="${k}"/>`,
     worry:`<path d="M44.5 43.5q3.5-2.8 7 0" stroke="${k}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`}[mood];
-  const vb=head?'14 4 68 54':'10 4 78 92',h=head?size*54/68:size*92/78;
-  return `<svg class="sari ${mood}" width="${size}" height="${h}" viewBox="${vb}" aria-hidden="true">
+  const vb=head?'14 -2 70 60':'10 -2 80 98',h=head?size*60/70:size*98/80;
+  return `<svg class="sari ${mood}" width="${size}" height="${h}" viewBox="${vb}" aria-hidden="true"><g class="bod">
     <circle cx="48" cy="33" r="24" fill="#DE9A45"/><circle cx="48" cy="69" r="24" fill="#DE9A45"/>
     <circle cx="46.5" cy="31.5" r="22.5" fill="#F6C67E"/><circle cx="46.5" cy="67.5" r="22.5" fill="#F6C67E"/>
     <path d="M36 63q3-2 6 0M50 72q3-2 6 0M38 79q3-2 6 0M52 60q3-2 6 0" stroke="#E7AD5E" stroke-width="2" stroke-linecap="round" fill="none"/>
     <ellipse cx="37" cy="17" rx="6" ry="3" fill="#fff" opacity=".5" transform="rotate(-30 37 17)"/>
     <ellipse cx="36" cy="40" rx="3.6" ry="2.3" fill="#FF8A6B" opacity=".45"/><ellipse cx="60" cy="40" rx="3.6" ry="2.3" fill="#FF8A6B" opacity=".45"/>
-    ${eyes}${mouth}
+    <g class="eyes"><g class="blink">${eyes}</g></g>${mouth}
     <g class="hand"><ellipse cx="72" cy="58" rx="5" ry="6.5" fill="#DE9A45" transform="rotate(-20 72 58)"/><ellipse cx="71.4" cy="57.4" rx="4.2" ry="5.6" fill="#F6C67E" transform="rotate(-20 71.4 57.4)"/></g>
-    <path d="M22 34A26 26 0 0 1 74 34" stroke="#2463EB" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <rect x="17" y="27" width="10" height="17" rx="5" fill="#2463EB"/><rect x="19.5" y="30.5" width="5" height="10" rx="2.5" fill="#609FFF"/>
-    <rect x="69" y="27" width="10" height="17" rx="5" fill="#2463EB"/><rect x="71.5" y="30.5" width="5" height="10" rx="2.5" fill="#609FFF"/>
-    <path d="M22 43c0 7.5 6.5 10 14.5 8.6" stroke="#2463EB" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <circle cx="38.5" cy="51.4" r="3.6" fill="#609FFF" stroke="#2463EB" stroke-width="2"/>
+    </g><g class="ai-spark"><path class="s1" d="${star(67,10,11.5)}" fill="url(#${gid})"/><path class="s2" d="${star(79,24.5,4.8)}" fill="#609FFF"/><path class="s3" d="${star(26,7,3.8)}" fill="#A9CBFF"/></g>
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#609FFF"/><stop offset="1" stop-color="#1A4FC9"/></linearGradient></defs>
   </svg>`;
 }
 const avatar=(mood='idle')=>`<span class="avatar">${sari(32,mood,true)}</span>`;
+// header mark for Sari panels: AI sparkle, pulses while Sari is working
+const aiMark=()=>itile('spark',`hl ai ${S.thinking?'busy':''}`);
+// marker beside each chat answer: AI sparkle in a soft tile, pulses while the answer is being written
+const aiBubble=(busy)=>`<span class="avatar ai-b ${busy?'busy':''}"><svg class="duo" viewBox="0 0 24 24" aria-hidden="true">${DUO.spark.replaceAll('aiG','aiG'+(++sariN))}</svg></span>`;
 
 /* ================= State & time ================= */
-const S={mode:'loading',tab:'overview',handled:{},t0:Date.now(),
+const S={tipPaused:matchMedia('(prefers-reduced-motion:reduce)').matches,mode:'loading',tab:'overview',handled:{},t0:Date.now(),
   lines:{L1:{stop:false,prev:0},L2:{stop:true,since:'06:12',base:47,t:Date.now(),reason:'Oven temperature sensor',prev:0},L3:{stop:false,prev:0}},
   tipIdx:0,fabTip:true,convo:[],thinking:false,queue:[],aiFilter:false,simReason:'Packing jam',dlg:null,updated:'06:59',
   ovp:'7d',fp:'7d',pf:'all',sf:'all',sAct:false,
@@ -561,9 +757,9 @@ const LK=['L1','L2','L3'];
 const D7=['11','12','13','14','15','16','17'],D7N=['Wed','Thu','Fri','Sat','Sun','Mon','Tue'];
 const DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const PROD={
-  L1:{n:'Line 1',p:'Keripik Singkong Balado',type:'Cassava chips',sku:'SR-KSB-120',pack:'120 g',t:12000,a:[11880,11950,11720,11800,11690,11760,11640],dt:[12,8,20,15,22,10,18],rj:[1.7,1.8,1.9,1.8,1.7,1.9,1.8],fg:48200,sell:12000,c:'var(--c1)',hex:'#1E4FD8',short:'Chips'},
-  L2:{n:'Line 2',p:'Kacang Atom Pedas',type:'Coated peanuts',sku:'SR-KAP-100',pack:'100 g',t:10000,a:[9620,9540,9310,9050,8920,8980,8850],dt:[10,14,22,28,31,30,35],rj:[2.2,2.3,2.4,2.4,2.9,3.2,3.6],fg:21500,sell:10750,c:'var(--c2)',hex:'#4F8BFF',short:'Peanuts'},
-  L3:{n:'Line 3',p:'Makaroni Pedas',type:'Extruded snack',sku:'SR-MKP-90',pack:'90 g',t:9000,a:[9050,8980,9120,9010,9150,9090,9180],dt:[5,9,4,7,3,6,6],rj:[1.1,1.2,1.3,1.2,1.1,1.2,1.2],fg:36800,sell:9200,c:'var(--c3)',hex:'#A9CBFF',short:'Macaroni'}
+  L1:{n:'Line 1',p:'Keripik Singkong Balado',type:'Cassava chips',sku:'SR-KSB-120',pack:'120 g',t:12000,a:[11880,11950,11720,11800,11690,11760,11640],dt:[12,8,20,15,22,10,18],rj:[1.7,1.8,1.9,1.8,1.7,1.9,1.8],fg:48200,sell:12000,c:'var(--c1)',hex:'#2463EB',icon:'chips',tone:'',short:'Chips'},
+  L2:{n:'Line 2',p:'Kacang Atom Pedas',type:'Coated peanuts',sku:'SR-KAP-100',pack:'100 g',t:10000,a:[9620,9540,9310,9050,8920,8980,8850],dt:[10,14,22,28,31,30,35],rj:[2.2,2.3,2.4,2.4,2.9,3.2,3.6],fg:21500,sell:10750,c:'var(--c2)',hex:'#14B8A6',icon:'peanut',tone:'teal',short:'Peanuts'},
+  L3:{n:'Line 3',p:'Makaroni Pedas',type:'Extruded snack',sku:'SR-MKP-90',pack:'90 g',t:9000,a:[9050,8980,9120,9010,9150,9090,9180],dt:[5,9,4,7,3,6,6],rj:[1.1,1.2,1.3,1.2,1.1,1.2,1.2],fg:36800,sell:9200,c:'var(--c3)',hex:'#8B5CF6',icon:'macaroni',tone:'violet',short:'Macaroni'}
 };
 const NOV=[390,418,392,401,388,410,395,402,386,408,412,398,371,355,362,348,344];
 const MJ=[80,79,80,79,79,80,79,79,79,78,86,84,52,50,50,48,48];
@@ -580,7 +776,7 @@ const DIST={
   '7d':{lbl:'Nov 11–17',prev:'Nov 4–10',rows:[['PT Sumber Pangan Jaya','Jabodetabek',742,735,0],['CV Maju Jaya','Central Java',418,602,212],['UD Berkah Sentosa','East Java',386,392,134],['PT Nusantara Retail Distribusi','West Java',351,364,0],['CV Sinar Abadi','North Sumatra',298,301,54],['Toko Grosir Makmur','Central Java',96,94,86],['13 other distributors','',299,302,0]]},
   'mtd':{lbl:'Nov 1–17',prev:'Oct 1–17',rows:[['PT Sumber Pangan Jaya','Jabodetabek',1880,1825,0],['CV Maju Jaya','Central Java',1210,1551,212],['UD Berkah Sentosa','East Java',980,990,134],['PT Nusantara Retail Distribusi','West Java',900,928,0],['CV Sinar Abadi','North Sumatra',760,760,54],['Toko Grosir Makmur','Central Java',240,236,86],['13 other distributors','',610,620,0]]}
 };
-const AGING=[['Not yet due',1654,'#DCE8FF'],['1–15 days late',188,'#A9CBFF'],['16–30 days late',86,'#4F8BFF'],['30+ days late',212,'#1E4FD8']];
+const AGING=[['Not yet due',1654,'#2463EB'],['1–15 days late',188,'#F5A524'],['16–30 days late',86,'#F07B3F'],['30+ days late',212,'#EF4444']];
 const OVERDUE=[['CV Maju Jaya','INV-2610-118',212,38,'crit'],['Toko Grosir Makmur','INV-2610-142',86,21,'warn'],['UD Berkah Sentosa','INV-2611-007',134,12,'warn'],['CV Sinar Abadi','INV-2611-019',54,5,'warn']];
 const UPCOMING=[['PT Sumber Pangan Jaya',310,'Nov 20'],['PT Nusantara Retail Distribusi',145,'Nov 22'],['UD Berkah Sentosa',98,'Nov 24']];
 
@@ -624,13 +820,15 @@ function health(){
 }
 
 /* ================= Shell: top bar & tabs ================= */
-const TABS=[['overview','grid','Overview'],['production','factory','Production'],['stock','box','Stock'],['finance','wallet','Finance']];
+const TABS=[['overview','grid','Overview'],['production','snack','Product'],['stock','box','Stock'],['finance','wallet','Finance']];
 function renderTop(){
   const n=openAlerts().length;
-  const chip=S.mode==='offline'?`<span class="pill-meta warn">${ic('wifioff','i-sm')}Offline · data from ${S.updated}</span>`
-    :S.mode==='error'?`<span class="pill-meta warn">${ic('tri','i-sm')}Update failed</span>`
-    :`<span class="pill-meta">${ic('clock','i-sm')}Updated ${S.updated}</span>`;
-  el('top').innerHTML=`<div class="top-l"><span class="logo">SR</span><div><h1><span class="lbl-d">Good morning, </span><span class="lbl-m">Morning, </span>Pak Hendra</h1><p class="sub"><span class="lbl-d">Wednesday, Nov 18, 2026 · PT Sari Rasa Nusantara</span><span class="lbl-m">${S.mode==='offline'?'Offline · data from':'Updated'} ${S.updated}</span></p></div></div>
+  const fresh=S.mode==='offline'?`<span class="st warn">${ic('wifioff','i-sm')}Offline · data from ${S.updated}</span>`
+    :S.mode==='error'?`<span class="st warn">${ic('tri','i-sm')}Update failed</span>`
+    :`<span class="st">${ic('clock','i-sm')}Updated ${S.updated}</span>`;
+  // greeting, date and data freshness live together in one bar on the right
+  const chip=`<span class="pill-meta greet"><span>Good morning, <b>Pak Hendra</b></span><i class="sep"></i><span>Wed, Nov 18</span><i class="sep"></i>${fresh}</span>`;
+  el('top').innerHTML=`<div class="top-l"><span class="logo"><img src="assets/fugodash-logo.svg" alt=""></span><div class="brand"><h1>Fugodash Surya</h1><p><span class="lbl-d">for PT Sari Rasa Nusantara</span><span class="lbl-m ${S.mode==='offline'||S.mode==='error'?'warn':''}">${S.mode==='offline'?'Offline · data from '+S.updated:S.mode==='error'?'Update failed':'Updated '+S.updated}</span></p></div></div>
    <div class="top-r">${chip}<button class="icon-btn" id="refreshBtn" data-act="refresh" aria-label="Refresh data">${ic('refresh','i-sm')}</button><button class="icon-btn" data-act="all-alerts" aria-label="${n} alerts">${ic('bell','i-sm')}${n?`<span class="badge">${n}</span>`:''}</button></div>`;
   el('tabs').innerHTML=TABS.map(([k,i,l])=>`<button role="tab" aria-selected="${S.tab===k}" data-act="tab" data-v="${k}">${ic(i,'i-sm')}${l}</button>`).join('');
   el('tools').innerHTML=tools();
@@ -647,7 +845,7 @@ function tools(){
 function statusHTML(){
   if(S.mode==='loading')return `<section class="card status"><div class="st-main"><div class="sk" style="width:40px;height:40px;border-radius:11px"></div><div><div class="sk" style="width:90px;height:10px"></div><div class="sk" style="width:70px;height:16px;margin-top:6px"></div></div></div><div class="sk" style="height:14px"></div><div class="sk" style="height:6px"></div></section>`;
   const h=health();
-  return `<section class="card status s-${h.lvl}" aria-live="polite"><div class="st-main">${itile(h.icon,'lg')}<div><div class="st-l">Business today</div><div class="st-t"><span class="sdot ${h.lvl}"></span>${h.word}</div></div></div>
+  return `<section class="card status s-${h.lvl}" aria-live="polite"><div class="st-main"><span class="st-ic">${itile(h.icon,'lg')}</span><div><div class="st-l">Business today</div><div class="st-t"><span class="sdot ${h.lvl}"></span>${h.word}</div></div></div>
    <p class="st-text">${h.text} <b>${h.n?`${h.n} items need your attention.`:'Nothing is waiting for you.'}</b></p>
    <div class="scale" role="img" aria-label="Status scale, now ${h.word}">${[['ok','On track'],['warn','Watch'],['crit','Critical']].map(([k,l])=>`<div class="${k} ${h.lvl===k?'on':''}"><i></i><span>${l}</span></div>`).join('')}</div>
    ${S.mode==='error'?`<div class="st-warn" role="alert">${ic('tri','i-sm')}<span>Production data hasn't updated since 05:30. Other numbers are still usable.</span><button class="btn btn-s btn-sm" data-act="retry">Try again</button></div>`:''}</section>`;
@@ -658,38 +856,46 @@ function kpis(){
    {ic:'factory',l:'Output',per:'Yesterday',v:'29,670',u:'pcs',d:['ok','check','95.7%','of target'],go:'production',
     segs:LK.map(k=>({n:PROD[k].short,v:PROD[k].a[6],c:PROD[k].c,vl:fmt(PROD[k].a[6])}))},
    {ic:'trend',l:'Revenue',per:'Nov 1–17',v:'Rp 6.58',u:'B',d:['warn','down','8%','vs target'],go:'finance',
-    segs:[['Sumber',1880,'var(--c1)'],['Maju Jaya',1210,'var(--c2)'],['Berkah',980,'var(--c3)'],['Others',2510,'var(--c4)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
+    segs:[['Sumber',1880,'var(--c1)'],['Maju Jaya',1210,'#8EC2FF'],['Berkah',980,'var(--c2)'],['Others',2510,'var(--c5)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
    {ic:'receipt',l:'Overdue receivables',per:'As of Nov 16',stale:true,v:'Rp 486',u:'M',d:['warn','up','Rp 74M','vs last week'],go:'finance',anc:'recv',
-    segs:[['30+ days',212,'var(--c1)'],['16–30 days',86,'var(--c2)'],['1–15 days',188,'var(--c3)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
+    segs:[['30+ days',212,'var(--crit)'],['16–30 days',86,'var(--warn)'],['1–15 days',188,'var(--c4)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))},
    {ic:'box',l:'Materials at risk',per:'Today 05:00',v:'3',u:'of 6',d:['crit','oct','Peanuts 2 days',''],go:'stock',
     segs:[['Critical',st.filter(s=>s==='crit').length,'var(--crit)'],['Watch',st.filter(s=>s==='warn').length,'var(--warn)'],['OK',st.filter(s=>s==='ok').length,'var(--ok)']].map(([n,v,c])=>({n,v,c,vl:v}))}
   ];
 }
+const segTip=x=>{const t=sum(x.segs.map(s=>s.v))||1;return ttHTML(`${x.l} breakdown`,x.segs.map(s=>[s.c,`${s.n} <span class='tt-p'>${Math.round(s.v/t*100)}%</span>`,s.vl,'n']))};
 function kpisHTML(){
   if(S.mode==='loading')return `<section class="kpis">${[1,2,3,4].map(()=>`<div class="card kpi"><div class="sk" style="width:60%;height:20px"></div><div class="sk" style="width:50%;height:26px"></div><div class="sk" style="height:10px"></div><div class="sk" style="height:30px"></div></div>`).join('')}</section>`;
-  return `<section class="kpis" aria-label="Key numbers">${kpis().map(x=>`<button class="card kpi" data-act="tab" data-v="${x.go}" ${x.anc?`data-anc="${x.anc}"`:''} aria-label="${x.l} ${x.v}${x.u}. Open ${x.go}">
-    <span class="kpi-h">${itile(x.ic)}${x.l}<span class="per ${x.stale?'stale':''}">${x.per}</span></span>
-    <span class="kpi-vr"><span class="fig">${x.v}<small>${x.u}</small></span><span class="delta d-${x.d[0]}">${ic(x.d[1],'i-xs')}${x.d[2]}${x.d[3]?`<span class="vs">${x.d[3]}</span>`:''}</span></span>
-    <span class="segbar">${x.segs.filter(s=>s.v).map((s,i)=>`<i style="flex:${s.v};background:${s.c};animation-delay:${i*60}ms"></i>`).join('')}</span>
-    <span class="leg2">${x.segs.map(s=>`<span><i class="sw" style="background:${s.c}"></i><em>${s.n}</em><b>${s.vl}</b></span>`).join('')}</span></button>`).join('')}</section>`;
+  return kpiRow(kpis());
 }
+// one KPI card format for every tab: header (icon · title · period), figure + delta, breakdown bar with tooltip.
+// Cards with `go` navigate (Overview); the rest are plain cards.
+function kpiCard(x){
+  const inner=`<span class="kpi-h">${itile(x.ic,'hl',x.d[0])}<span class="kpi-l" title="${x.l}">${x.l}</span><span class="per ${x.stale?'stale':''}">${x.per}</span></span>
+    <span class="kpi-vr"><span class="fig" ${x.vc?`style="color:${x.vc}"`:''}>${x.v}<small>${x.u}</small></span><span class="delta d-${x.d[0]}">${ic(x.d[1],'i-xs')}${x.d[2]}${x.d[3]?`<span class="vs">${x.d[3]}</span>`:''}</span></span>
+    <span class="segbar-hit" data-tip="${segTip(x)}"><span class="segbar">${x.segs.filter(s=>s.v>0).map((s,i)=>`<i style="flex:${s.v};background:${s.c};animation-delay:${i*60}ms"></i>`).join('')}</span></span>`;
+  return x.go?`<button class="card kpi" data-act="tab" data-v="${x.go}" ${x.anc?`data-anc="${x.anc}"`:''} aria-label="${x.l} ${x.v}${x.u}. Open ${x.go}">${inner}</button>`:`<div class="card kpi static-kpi">${inner}</div>`;
+}
+const kpiRow=list=>`<section class="kpis" aria-label="Key numbers">${list.map(kpiCard).join('')}</section>`;
+const skKpis=()=>`<section class="kpis">${[1,2,3,4].map(()=>`<div class="card kpi"><div class="sk" style="width:60%;height:20px"></div><div class="sk" style="width:50%;height:26px"></div><div class="sk" style="height:10px"></div></div>`).join('')}</section>`;
+const rpParts=m=>m>=1000?[`Rp ${(m/1000).toFixed(2)}`,'B']:[`Rp ${fmt(Math.round(m))}`,'M'];
 function revSeries(p){
   const idx=p==='mtd'?[...Array(17).keys()]:[10,11,12,13,14,15,16];
   return {lbl:idx.map(i=>p==='mtd'?String(i+1):`${DOW[i%7]} ${i+1}`),tip:idx.map(i=>`${DOW[i%7]}, Nov ${i+1}`),
-    mj:idx.map(i=>MJ[i]),oth:idx.map(i=>NOV[i]-MJ[i]),annot:{i:idx.indexOf(12),t:'Nov 13 · CV Maju Jaya credit hold'}};
+    mj:idx.map(i=>MJ[i]),oth:idx.map(i=>NOV[i]-MJ[i]),annot:{i:idx.indexOf(12),t:'CV Maju Jaya put on credit hold'}};
 }
 function revChart(key,p){
   const r=revSeries(p);
-  CH[key]=(w,h)=>stackChart(w,h,{lbl:r.lbl,tip:r.tip,series:[{n:'Other distributors',c:'#1E4FD8',v:r.oth},{n:'CV Maju Jaya',c:'#A9CBFF',v:r.mj}],
-    target:420,tLbl:'Target Rp 420M',top:500,step:100,yf:v=>v?`${v}M`:'0',vf:v=>`Rp ${v}M`,annot:r.annot,totals:p!=='mtd',aria:'Daily revenue stacked by distributor against a Rp 420M target'});
+  CH[key]=(w,h)=>stackChart(w,h,{lbl:r.lbl,tip:r.tip,series:[{n:'Other distributors',c:'#2463EB',v:r.oth},{n:'CV Maju Jaya',c:'#8EC2FF',v:r.mj}],
+    target:420,tLbl:'Target Rp 420M',top:500,step:100,yf:v=>v?`${v}M`:'0',vf:v=>`Rp ${v}M`,annot:r.annot,totals:false,aria:'Daily revenue stacked by distributor against a Rp 420M target'});
 }
 function chartCardHTML(){
   if(S.mode==='loading')return `<section class="card col"><div class="card-h"><div class="sk" style="width:200px;height:22px"></div></div><div class="chart"><div class="sk" style="height:100%"></div></div></section>`;
   revChart('ov',S.ovp);
   const tot=S.ovp==='mtd'?['Rp 6.58B','92% of month-to-date target','−5% vs Oct 1–17']:['Rp 2.59B','88% of weekly target','−7% vs last week'];
-  return `<section class="card col"><div class="card-h">${itile('bars')}<div class="ch-t"><h2>Revenue vs target ${infoBtn('sales')}</h2><p>${tot[0]} · ${tot[1]}</p></div>
+  return `<section class="card col"><div class="card-h">${itile('bars','hl')}<div class="ch-t"><h2>Revenue vs target ${infoBtn('sales')}</h2><p>${tot[0]} · ${tot[1]}</p></div>
     <select class="sel" data-sel="ovp" aria-label="Period"><option value="7d" ${S.ovp==='7d'?'selected':''}>Last 7 days</option><option value="mtd" ${S.ovp==='mtd'?'selected':''}>This month</option></select></div>
-   <div class="legend"><span><i class="sw" style="background:#1E4FD8"></i>Other distributors</span><span><i class="sw" style="background:#A9CBFF"></i>CV Maju Jaya</span><span><i class="dash"></i>Daily target</span></div>
+   <div class="legend"><span><i class="sw" style="background:#2463EB"></i>Other distributors</span><span><i class="sw" style="background:#8EC2FF"></i>CV Maju Jaya</span><span><i class="dash"></i>Daily target</span></div>
    <div class="chart" data-chart="ov"></div>
    <div class="card-f"><button class="btn btn-s btn-sm" data-act="export">CSV ${ic('dl','i-xs')}</button><button class="btn btn-s btn-sm" data-act="export">PDF ${ic('dl','i-xs')}</button><span class="sp"></span><span class="delta d-warn">${ic('down','i-xs')}${tot[2].split(' ')[0].replace('−','')}<span class="vs">${tot[2].split(' ').slice(1).join(' ')}</span></span></div></section>`;
 }
@@ -703,8 +909,8 @@ function alertItem(a){
 function alertsCardHTML(){
   if(S.mode==='loading')return `<section class="card col"><div class="card-h"><div class="sk" style="width:180px;height:22px"></div></div><div class="al-list">${[1,2,3].map(()=>`<div class="sk" style="height:70px;border-radius:12px"></div>`).join('')}</div></section>`;
   const open=openAlerts(),hd=handledAlerts();
-  return `<section class="card col" aria-label="Needs attention"><div class="card-h">${itile('bell')}<div class="ch-t"><h2>Needs attention <span class="count ${open.length?'':'zero'}">${open.length}</span></h2><p>Most costly first</p></div><button class="btn btn-s btn-sm" data-act="all-alerts">View all</button></div>
-   <div class="col-b">${open.length?`<div class="al-list">${open.map(alertItem).join('')}</div>`
+  return `<section class="card col ${open.length?`attn attn-${open.some(a=>a.sev==='crit')?'crit':'warn'}`:''}" aria-label="Needs attention"><div class="card-h">${itile('siren','hl')}<div class="ch-t"><h2>Needs attention <span class="count ${open.length?'':'zero'}">${open.length}</span></h2><p>Most costly first</p></div><button class="btn btn-s btn-sm" data-act="all-alerts">View all</button></div>
+   <div class="col-b">${open.length?`<div class="al-list">${(S.alMore?open:open.slice(0,3)).map(alertItem).join('')}${open.length>3?`<button class="al-more ${S.alMore?'open':''}" data-act="al-more" aria-expanded="${!!S.alMore}">${S.alMore?'Show less':`Show ${open.length-3} more`}${ic('chev','i-xs')}</button>`:''}</div>`
     :`<div class="empty">${itile('check','lg')}<b>Nothing needs you right now</b><p>${S.mode==='clear'?'All lines running, stock is fine, and no new late payments.':'Every alert has an owner.'}</p></div>`}</div>
    <div class="card-f">${hd.length?`<button class="link" data-act="all-alerts" data-sec="handled"><span class="sdot prog"></span>In progress (${hd.length}) ${ic('chev','i-xs')}</button>`:`<span class="muted" style="font-size:12px">Tap an alert to assign an owner</span>`}</div></section>`;
 }
@@ -725,32 +931,63 @@ function tips(){
 const curTip=()=>{const T=tips();return [T[S.tipIdx%T.length],T.length]};
 const tipAct=t=>t.act?`data-act="${t.act}" ${t.id?`data-id="${t.id}"`:''} ${t.q?`data-q="${esc(t.q)}"`:''}`:'';
 const askForm=(ph='Ask Sari anything…')=>`<form class="ask" data-form="ask" autocomplete="off"><input name="q" placeholder="${ph}" aria-label="Question for Sari" ${S.thinking?'disabled':''}><button type="button" class="mic" data-act="mic" aria-label="Ask by voice">${ic('mic','i-sm')}</button><button class="send" aria-label="Send" disabled>${ic('send','i-sm')}</button></form>`;
+// Insight carousel: auto-advances every TIP_MS (driven by the progress bar's CSS animation,
+// so hover/focus/pause just freeze it). Prev / pause / next stay manual.
+const TIP_MS=6000;
+function insightHTML(){
+  const [t,n]=curTip(),mood=S.thinking?'think':(t.mood||'idle'),multi=n>1&&!S.thinking,pz=S.tipPaused;
+  return `<div class="insight ${pz?'paused':''}" role="group" aria-roledescription="carousel" aria-label="Insights from Sari">
+     <div class="ins-top">${aiBubble(S.thinking)}<span class="ins-tag">${S.thinking?'Working on it':'Insight for you'}</span>${multi?`<div class="ins-ctl">
+       <button data-act="prev-tip" aria-label="Previous insight">${ic('chev','i-xs flip')}</button><span class="ins-n" aria-live="${pz?'polite':'off'}">${S.tipIdx%n+1}/${n}</span><button data-act="next-tip" aria-label="Next insight">${ic('chev','i-xs')}</button>
+       <button data-act="pause-tip" aria-pressed="${!!pz}" aria-label="${pz?'Play insights':'Pause insights'}">${ic(pz?'play':'pause','i-xs')}</button></div>`:''}</div>
+     <div class="ins-body">${S.thinking?'<span class="typing" aria-label="Sari is typing"><i></i><i></i><i></i></span>':`<p class="ins-t">${t.t}</p>${t.a?`<button class="btn btn-p btn-sm" ${tipAct(t)}>${t.a}${ic('chev','i-xs')}</button>`:''}`}</div>
+     ${multi?`<span class="ins-prog" aria-hidden="true"><i style="animation-duration:${TIP_MS}ms"></i></span>`:''}</div>`;
+}
+let tipAt=0;
+function refreshInsight(){document.querySelectorAll('.insight').forEach(n=>{n.outerHTML=insightHTML()});
+  // title peanut mirrors the current tip's mood
+  const m=S.thinking?'think':(curTip()[0].mood||'idle'),sel=['#buddyCard .card-h>.avatar'];if(S.dlg&&S.dlg.kind==='buddy')sel.push('#dlg .dlg-h>.avatar');
+  document.querySelectorAll(sel.join(',')).forEach(n=>{n.outerHTML=avatar(m)})}
+function stepTip(d){const n=tips().length;S.tipIdx=((S.tipIdx+d)%n+n)%n;refreshInsight()}
+document.addEventListener('animationend',e=>{if(!e.target.matches||!e.target.matches('.ins-prog i'))return;const now=Date.now();if(now-tipAt<1000)return;tipAt=now;stepTip(1)});
 function buddyBody(){
   const [t,n]=curTip(),last=S.convo[S.convo.length-1],mood=S.thinking?'think':(t.mood||'idle');
-  return `<div class="insight">${sari(70,mood)}
-     <div class="ins-top"><span class="ins-tag">${ic('spark','i-xs')}${S.thinking?'Working on it':'Insight for you'}</span>${n>1&&!S.thinking?`<button class="next" data-act="next-tip" aria-label="Next insight">${S.tipIdx%n+1}/${n}${ic('chev','i-xs')}</button>`:''}</div>
-     ${S.thinking?'<span class="typing" aria-label="Sari is typing"><i></i><i></i><i></i></span>':`<p class="ins-t">${t.t}</p>${t.a?`<button class="btn btn-p btn-sm" ${tipAct(t)}>${t.a}${ic('chev','i-xs')}</button>`:''}`}</div>
+  return `${insightHTML()}
    ${last?`<button class="resume" data-act="open-chat">${ic('play','i-xs')}<span>Continue: <b>${esc(last.q)}</b></span>${ic('chev','i-xs')}</button>`:''}
-   <div class="sec-l">Ask Sari</div>
-   <div class="prompts">${PROMPTS.map(([i,q])=>`<button class="prompt" data-act="ask" data-q="${q}" ${S.thinking?'disabled':''}>${itile(i,'sm')}<span>${q}</span></button>`).join('')}</div>`;
+`;
 }
+const promptsHTML=()=>`<div class="prompts-wrap"><div class="prompts" aria-label="Suggested questions">${PROMPTS.map(([i,q])=>`<button class="prompt" data-act="ask" data-q="${q}" ${S.thinking?'disabled':''}>${ic(i,'i-xs')}<span>${q}</span></button>`).join('')}</div><button class="prompts-more" data-act="prompts-more" tabindex="-1" aria-label="More suggestions">${ic('chev','i-xs')}</button></div>`;
+// shade + arrow show only while more chips are hidden to the right; left shade once scrolled
+function updPrompts(r){const w=r.parentElement;if(!w)return;w.classList.toggle('scrolled',r.scrollLeft>4);w.classList.toggle('end',r.scrollLeft+r.clientWidth>=r.scrollWidth-4)}
+document.addEventListener('scroll',e=>{const t=e.target;if(t.classList&&t.classList.contains('prompts'))updPrompts(t)},true);
+const askBlock=()=>`<div class="ask-b">${promptsHTML()}${askForm()}</div>`;
 function buddyCardHTML(){
-  return `<aside class="card col" id="buddyCard" aria-label="Sari assistant"><div class="card-h">${avatar(S.thinking?'think':'idle')}<div class="ch-t"><h2>Sari</h2><p>Your assistant · reads factory data</p></div><span class="online"><i></i>Online</span></div>
-   <div class="col-b"><div class="buddy-b">${buddyBody()}</div></div><div class="card-f">${`<div style="flex:1">${askForm()}</div>`}</div></aside>`;
+  return `<aside class="card col" id="buddyCard" aria-label="Sari, AI assistant"><div class="card-h">${avatar(S.thinking?'think':(curTip()[0].mood||'idle'))}<div class="ch-t"><h2>Sari</h2><p>AI assistant · reads factory data</p></div></div>
+   <div class="col-b"><div class="buddy-b">${buddyBody()}</div></div><div class="card-f">${askBlock()}</div></aside>`;
 }
+/* Invite bubble: when no insight is showing, Sari periodically "types" a short nudge about what she can do */
+const INVITES=['Need a number fast? Just ask me','I can find who pays late in seconds','Ask me why revenue dropped this week','Which stock runs out first? Ask me'];
+let invI=0,invState='',invT;
+const invHTML=()=>`<div class="fab-inv ${invState}" id="fabInv"><button class="inv-b" data-act="buddy" aria-label="Open Sari: ${esc(INVITES[invI%INVITES.length])}">${invState==='typing'?'<span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>':`${ic('spark','i-xs')}<span>${INVITES[invI%INVITES.length]}</span>`}</button><button class="x" data-act="no-invite" aria-label="Stop suggestions">${ic('x','i-xs')}</button></div>`;
+function invSet(st){invState=st;const b=el('fabInv');if(b)b.outerHTML=invHTML()}
+function invLoop(delay=4000){clearTimeout(invT);invT=setTimeout(()=>{
+  if(S.noInvite)return;if(!el('fabInv')){invLoop(3000);return}
+  invSet('typing');invT=setTimeout(()=>{invSet('on');invT=setTimeout(()=>{invSet('');invI++;invLoop(9000)},5000)},1300)},delay)}
+invLoop();
 function renderFab(){
   const f=el('fab'),[t]=curTip(),mood=S.thinking?'think':(t.mood||'idle');
   f.className=(isDesk()&&S.tab==='overview')?'fab':'fab show desk-show';
   const showBub=S.fabTip&&!isDesk()&&!el('ov').classList.contains('open')&&S.mode!=='loading';
-  f.innerHTML=`${showBub?`<div class="fab-bub"><button class="x" data-act="hide-tip" aria-label="Close">${ic('x','i-xs')}</button><div class="ins-tag">${ic('spark','i-xs')}Sari</div>${S.thinking?'<span class="typing"><i></i><i></i><i></i></span>':`${t.t}${t.a?`<br><button class="go" ${tipAct(t)}>${t.a}${ic('chev','i-xs')}</button>`:''}`}</div>`:''}
-   <button class="fab-btn" data-act="buddy" aria-label="Open Sari assistant">${sari(50,mood,true)}<span class="dot"></span></button>`;
+  const inv=!showBub&&!S.noInvite&&!el('ov').classList.contains('open')&&S.mode!=='loading'&&!S.thinking;
+  f.innerHTML=`${inv?invHTML():''}${showBub?`<div class="fab-bub"><button class="x" data-act="hide-tip" aria-label="Close">${ic('x','i-xs')}</button><div class="ins-tag">${ic('spark','i-xs')}Sari</div>${S.thinking?'<span class="typing"><i></i><i></i><i></i></span>':`${t.t}${t.a?`<br><button class="go" ${tipAct(t)}>${t.a}${ic('chev','i-xs')}</button>`:''}`}</div>`:''}
+   <button class="fab-btn" data-act="buddy" aria-label="Open Sari assistant">${sari(50,mood,true)}</button>`;
 }
 
 /* ================= Production ================= */
 function viewProduction(){
   const sel=S.pf==='all'?LK:[S.pf];
   const cards=LK.map(k=>{const l=PROD[k],L=S.lines[k],stop=isStop(k),a=l.a[6],p=a/l.t*100,rj=l.rj[6],cover=l.fg/l.sell;
-    return `<section class="card lc ${sel.includes(k)?'':'dim'}"><div class="card-h">${itile('factory')}<div class="ch-t"><h2>${l.n} · ${l.p}</h2><p>${l.type} · ${l.sku} · ${l.pack}</p></div>${stop?`<span class="tag t-crit"><span class="sdot crit live"></span>Stopped ${minTxt(k)}</span>`:`<span class="tag t-ok"><span class="sdot ok"></span>Running</span>`}</div>
+    return `<section class="card lc ${sel.includes(k)?'':'dim'}"><div class="card-h">${itile(l.icon,'hl',l.tone)}<div class="ch-t"><h2>${l.p}</h2><p>${l.n} · ${l.type} · ${l.sku} · ${l.pack}</p></div>${stop?`<span class="tag t-crit"><span class="sdot crit live"></span>Stopped ${minTxt(k)}</span>`:`<span class="tag t-ok"><span class="sdot ok"></span>Running</span>`}</div>
      <div class="lc-b"><div class="mstats"><div><span>Today so far</span><b>${fmt(todayOut(k))}</b></div><div><span>Yesterday</span><b class="${p<95?'w':''}">${dec(p)}%</b></div><div><span>Downtime</span><b>${l.dt[6]} min</b></div><div><span>Rejects</span><b class="${rj>3?'w':''}">${dec(rj)}%</b></div></div>
       <div><div class="meta" style="margin-bottom:6px"><span>Yesterday <b>${fmt(a)}</b> of ${fmt(l.t)} pcs</span><span>Target</span></div><div class="track"><i class="${p>=95?'f-ok':p>=85?'f-warn':'f-crit'}" style="width:${Math.min(100,p/105*100)}%"></i><span class="mk" style="left:${100/105*100}%"></span></div></div>
       ${stop?`<div class="stop-note">${ic('oct','i-xs')}${L.reason} · since ${L.since} · ${lossTxt(k)} lost</div>`:`<div class="meta"><span>Speed <b>${RATE[k]} pcs/min</b></span><span>Stock <b>${fmt(l.fg)} pcs</b> · ${dec(cover)} days</span></div>`}</div></section>`}).join('');
@@ -761,10 +998,10 @@ function viewProduction(){
     limit:3,min:0,max:4,step:1,yf:v=>`${v}%`,aria:'Reject rate per line with 3% limit'});
   const tA=sum(sel.map(k=>sum(PROD[k].a))),tT=sum(sel.map(k=>PROD[k].t*7));
   return `<div class="lines">${cards}</div>
-   <div class="g2"><section class="card col"><div class="card-h">${itile('bars')}<div class="ch-t"><h2>Output vs target ${infoBtn('prod')}</h2><p>${S.mode==='error'?'<span style="color:var(--warn-ink)">Data as of 05:30, not updated</span>':`Nov 11–17 · ${fmt(tA)} of ${fmt(tT)} pcs (${dec(tA/tT*100)}%)`}</p></div><select class="sel" aria-label="Period" disabled><option>Last 7 days</option></select></div>
+   <div class="g2"><section class="card col"><div class="card-h">${itile('bars','hl')}<div class="ch-t"><h2>Output vs target ${infoBtn('prod')}</h2><p>${S.mode==='error'?'<span style="color:var(--warn-ink)">Data as of 05:30, not updated</span>':`Nov 11–17 · ${fmt(tA)} of ${fmt(tT)} pcs (${dec(tA/tT*100)}%)`}</p></div><select class="sel" aria-label="Period" disabled><option>Last 7 days</option></select></div>
      <div class="legend">${sel.map(k=>`<span><i class="sw" style="background:${PROD[k].hex}"></i>${PROD[k].n} · ${PROD[k].short}</span>`).join('')}<span><i class="dash"></i>Target</span></div>
      <div class="chart" data-chart="pout"></div></section>
-    <section class="card col"><div class="card-h">${itile('gauge')}<div class="ch-t"><h2>Reject rate ${infoBtn('prod')}</h2><p>Line 2 is above the 3% limit since Nov 16</p></div></div>
+    <section class="card col"><div class="card-h">${itile('reject','hl')}<div class="ch-t"><h2>Reject rate ${infoBtn('prod')}</h2><p>Line 2 is above the 3% limit since Nov 16</p></div></div>
      <div class="legend">${LK.map(k=>`<span style="opacity:${sel.includes(k)?1:.4}"><i class="sw" style="background:${PROD[k].hex}"></i>${PROD[k].n}</span>`).join('')}<span><i class="dash" style="border-color:var(--crit)"></i>Limit 3%</span></div>
      <div class="chart" data-chart="prej"></div></section></div>`;
 }
@@ -779,17 +1016,24 @@ function viewStock(){
      <td>${b.po==='none'?`<span class="tag ${s==='crit'?'t-crit':'t-warn'}">No PO</span>`:b.po?`<span class="tag t-prog">${b.po}</span>`:'<span class="muted">—</span>'}</td>
      <td class="r">${b.al?(h?`<span class="tag t-prog">${h.pic}</span>`:`<button class="btn btn-s btn-sm" data-act="assign-open" data-id="${b.al}">Order</button>`):''}</td></tr>`}).join('')||`<tr><td colspan="7" style="text-align:center;padding:24px" class="muted">No items match this filter</td></tr>`;
   const fgTot=sum(PROD.L1?LK.map(k=>PROD[k].fg):[]);
-  return `<section class="minis">
-    <div class="card mini">${itile('oct')}<div class="ch-t"><span>Critical · under 3 days</span><b>1<small>Peanuts</small></b></div></div>
-    <div class="card mini">${itile('tri')}<div class="ch-t"><span>Watch · 3–7 days</span><b>2<small>Cassava, balado</small></b></div></div>
-    <div class="card mini">${itile('truck')}<div class="ch-t"><span>Open purchase orders</span><b>1<small>arrives Nov 19</small></b></div></div>
-    <div class="card mini">${itile('box')}<div class="ch-t"><span>Finished goods</span><b>${fmt(fgTot)}<small>pcs · ±Rp 1.6B</small></b></div></div></section>
-   <div class="g2"><section class="card col"><div class="card-h">${itile('box')}<div class="ch-t"><h2>Materials & packaging ${infoBtn('stok')}</h2><p>Counted Nov 18, 05:00 · cover = on hand ÷ 7-day average use</p></div></div>
+  const bs=BAHAN.map(b=>bst(b.d)),nC=bs.filter(x=>x==='crit').length,nW=bs.filter(x=>x==='warn').length,nT=BAHAN.length;
+  const crit=BAHAN.filter(b=>bst(b.d)==='crit'),watch=BAHAN.filter(b=>bst(b.d)==='warn');
+  const onWay=BAHAN.filter(b=>b.po&&b.po!=='none').length,needPO=BAHAN.filter(b=>b.po==='none').length;
+  return `${kpiRow([
+    {ic:'crit',l:'Critical stock',per:'Under 3 days',v:String(nC),u:`of ${nT}`,d:['crit','oct',crit.map(b=>b.n).join(', ')||'None',crit.length?`${crit[0].d} days left`:''],
+     segs:[{n:'Critical',v:nC,c:'var(--crit)',vl:nC},{n:'Other materials',v:nT-nC,c:'var(--c5)',vl:nT-nC}]},
+    {ic:'warn',l:'Watch',per:'3–7 days',v:String(nW),u:`of ${nT}`,d:['warn','tri',watch.map(b=>({'Fresh cassava':'Cassava','Balado seasoning':'Balado'}[b.n]||b.n)).join(', '),''],
+     segs:[{n:'Watch',v:nW,c:'var(--warn)',vl:nW},{n:'Other materials',v:nT-nW,c:'var(--c5)',vl:nT-nW}]},
+    {ic:'truck',l:'Purchase orders',per:'Open',v:String(onWay),u:'on the way',d:['warn','tri',`${needPO} need a PO`,''],
+     segs:[{n:'On the way',v:onWay,c:'var(--c1)',vl:onWay},{n:'Still need a PO',v:needPO,c:'var(--warn)',vl:needPO}]},
+    {ic:'box',l:'Finished goods',per:'Today 05:00',v:fmt(fgTot),u:'pcs',d:['ok','check','±Rp 1.6B','value'],
+     segs:LK.map(k=>({n:PROD[k].short,v:PROD[k].fg,c:PROD[k].c,vl:fmt(PROD[k].fg)}))}])}
+   <div class="g2"><section class="card col"><div class="card-h">${itile('box','hl')}<div class="ch-t"><h2>Materials & packaging ${infoBtn('stok')}</h2><p>Counted Nov 18, 05:00 · cover = on hand ÷ 7-day average use</p></div></div>
      <div class="col-b tbl-wrap"><table class="tbl"><thead><tr><th>Item</th><th class="r">On hand</th><th>Cover <span style="font-weight:400">(3 · 7 day marks)</span></th><th class="r">Lead</th><th>PO</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></section>
-    <div class="stack"><section class="card col" style="flex:1.15"><div class="card-h">${itile('factory')}<div class="ch-t"><h2>Finished goods ${infoBtn('stok')}</h2><p>Stock vs 7-day average sales</p></div></div>
+    <div class="stack"><section class="card col" style="flex:1.15"><div class="card-h">${itile('pack','hl')}<div class="ch-t"><h2>Finished goods ${infoBtn('stok')}</h2><p>Stock vs 7-day average sales</p></div></div>
       <div class="col-b rows">${LK.map(k=>{const l=PROD[k],d=l.fg/l.sell,s=d<3?'warn':'ok';return `<div class="row"><span class="sw" style="background:${l.hex};width:8px;height:28px;border-radius:4px"></span><div class="n"><b>${l.p}</b><span>${l.sku} · sells ${fmt(l.sell)}/day</span></div><span class="amt">${fmt(l.fg)}</span><span class="tag t-${s}">${dec(d)} days</span></div>`}).join('')}
        ${isStop('L2')?`<div class="stop-note" style="margin:4px 0 12px">${ic('tri','i-xs')}Line 2 is stopped. Peanut cracker stock may run out Nov 20.</div>`:''}</div></section>
-     <section class="card col" style="flex:1"><div class="card-h">${itile('spark')}<div class="ch-t"><h2>Reorder plan</h2><p>Suggested by Sari from usage and lead time</p></div></div>
+     <section class="card col" style="flex:1"><div class="card-h">${itile('bag','hl')}<div class="ch-t"><h2>Reorder plan</h2><p>Suggested by Sari from usage and lead time</p></div></div>
       <div class="col-b rows">${[['Peanuts','4.5 t','Send today','crit','a2'],['Balado seasoning','560 kg','By tomorrow','warn','a5'],['Fresh cassava','On the way','PO arrives Nov 19','prog','']].map(r=>`<div class="row"><span class="sdot ${r[3]}"></span><div class="n"><b>${r[0]}</b><span>${r[2]}</span></div><span class="amt">${r[1]}</span>${r[4]&&!S.handled[r[4]]?`<button class="btn btn-s btn-sm" data-act="assign-open" data-id="${r[4]}">Assign</button>`:r[4]?`<span class="tag t-prog">Assigned</span>`:''}</div>`).join('')}</div></section></div></div>`;
 }
 
@@ -800,19 +1044,27 @@ function viewFinance(){
   const rows=dd.rows.map(r=>({n:r[0],w:r[1],o:r[2],pv:r[3],ch:(r[2]-r[3])/r[3]*100,pt:r[4],other:r[0].includes('other')}));
   const named=rows.filter(r=>!r.other).sort((a,b)=>S.aiFilter?a.ch-b.ch:b.o-a.o),others=rows.filter(r=>r.other);
   const agTot=sum(AGING.map(a=>a[1]));
-  return `<section class="minis">
-    <div class="card mini">${itile('trend')}<div class="ch-t"><span>Revenue · ${dd.lbl}</span><b>${rp(tot)}<small>${Math.round(tot/tg*100)}% of target</small></b></div></div>
-    <div class="card mini">${itile('bars')}<div class="ch-t"><span>vs ${dd.prev}</span><b style="color:var(--crit-ink)">−${rp(prev-tot)}<small>${dec((tot-prev)/prev*100)}%</small></b></div></div>
-    <div class="card mini">${itile('clock')}<div class="ch-t"><span>Average per day</span><b>${rp(tot/days)}<small>target Rp 420M</small></b></div></div>
-    <div class="card mini">${itile('receipt')}<div class="ch-t"><span>Overdue receivables</span><b>Rp 486M<small>4 distributors</small></b></div></div></section>
+  const pct=Math.round(tot/tg*100),avg=tot/days,R=rpParts(tot),A=rpParts(avg),D=rpParts(Math.abs(prev-tot));
+  const mj=dd.rows.find(r=>r[0]==='CV Maju Jaya'),mjDrop=Math.max(0,mj[3]-mj[2]),othDrop=Math.max(0,(prev-tot)-mjDrop);
+  const top=dd.rows.slice(0,3),rest=sum(dd.rows.slice(3).map(r=>r[2]));
+  const short={'PT Sumber Pangan Jaya':'Sumber','CV Maju Jaya':'Maju Jaya','UD Berkah Sentosa':'Berkah'},topC=['var(--c1)','#8EC2FF','var(--c2)'];
+  return `${kpiRow([
+    {ic:'trend',l:'Revenue',per:dd.lbl,v:R[0],u:R[1],d:[pct>=95?'ok':'warn',pct>=100?'check':'down',`${pct}%`,'of target'],
+     segs:[...top.map((r,i)=>({n:short[r[0]]||r[0],v:r[2],c:topC[i],vl:rp(r[2])})),{n:'Others',v:rest,c:'var(--c5)',vl:rp(rest)}]},
+    {ic:'bars',l:`vs ${dd.prev}`,per:'Change',v:(tot<prev?'−':'+')+D[0],u:D[1],vc:tot<prev?'var(--crit-ink)':'',d:[tot<prev?'crit':'ok',tot<prev?'down':'up',`${dec(Math.abs((tot-prev)/prev*100))}%`,'vs last period'],
+     segs:[{n:'CV Maju Jaya drop',v:mjDrop,c:'#8EC2FF',vl:rp(mjDrop)},{n:'Other distributors',v:othDrop,c:'var(--c1)',vl:rp(othDrop)}]},
+    {ic:'clock',l:'Average per day',per:'Target Rp 420M',v:A[0],u:A[1],d:[avg>=399?'ok':'warn','down',rp(Math.max(0,420-avg)),'below target'],
+     segs:[{n:'Average per day',v:avg,c:'var(--c1)',vl:rp(avg)},{n:'Gap to target',v:Math.max(0,420-avg),c:'var(--c5)',vl:rp(Math.max(0,420-avg))}]},
+    {ic:'receipt',l:'Overdue receivables',per:'As of Nov 16',stale:true,v:'Rp 486',u:'M',d:['warn','up','Rp 74M','vs last week'],
+     segs:[['30+ days',212,'var(--crit)'],['16–30 days',86,'var(--warn)'],['1–15 days',188,'var(--c4)']].map(([n,v,c])=>({n,v,c,vl:rp(v)}))}])}
    <div class="fgrid">
-    <section class="card col"><div class="card-h">${itile('bars')}<div class="ch-t"><h2>Daily revenue ${infoBtn('sales')}</h2><p>${dd.lbl} · stacked by distributor</p></div><div class="legend" style="padding:0"><span><i class="sw" style="background:#1E4FD8"></i>Others</span><span><i class="sw" style="background:#A9CBFF"></i>CV Maju Jaya</span><span><i class="dash"></i>Target</span></div></div>
+    <section class="card col"><div class="card-h">${itile('bars','hl')}<div class="ch-t"><h2>Daily revenue ${infoBtn('sales')}</h2><p>${dd.lbl} · stacked by distributor</p></div><div class="legend" style="padding:0"><span><i class="sw" style="background:#2463EB"></i>Others</span><span><i class="sw" style="background:#8EC2FF"></i>CV Maju Jaya</span><span><i class="dash"></i>Target</span></div></div>
      <div class="chart" data-chart="fin"></div></section>
-    <section class="card col" id="distCard"><div class="card-h">${itile('store')}<div class="ch-t"><h2>Distributors ${infoBtn('sales')}</h2><p>${dd.lbl} vs ${dd.prev}${S.aiFilter?' · biggest drop first':''}</p></div></div>
+    <section class="card col" id="distCard"><div class="card-h">${itile('store','hl')}<div class="ch-t"><h2>Distributors ${infoBtn('sales')}</h2><p>${dd.lbl} vs ${dd.prev}${S.aiFilter?' · biggest drop first':''}</p></div></div>
      <div class="col-b tbl-wrap"><table class="tbl"><thead><tr><th>Distributor</th><th class="r">Revenue</th><th class="r">Previous</th><th class="r">Change</th><th class="r">Overdue</th><th>Status</th></tr></thead><tbody>
      ${[...named,...others].map(r=>`<tr class="${r.ch<=-10?'hl':''}"><td><b>${r.n}</b>${r.w?`<span class="sub">${r.w}</span>`:''}</td><td class="r"><b>${rp(r.o)}</b></td><td class="r muted">${rp(r.pv)}</td><td class="r"><span class="delta ${r.ch<=-10?'d-crit':r.ch>0?'d-ok':''}" style="${r.ch>-10&&r.ch<=0?'color:var(--text-2)':''}">${r.ch>0?'+':''}${dec(r.ch,0)}%</span></td><td class="r">${r.pt?`<span class="${r.pt>=200?'imp-crit':'imp-warn'}">${rp(r.pt)}</span>`:'<span class="muted">—</span>'}</td><td>${r.pt>=200?'<span class="tag t-crit">Credit hold</span>':r.pt?'<span class="tag t-warn">Late</span>':r.other?'':'<span class="tag t-ok">Active</span>'}</td></tr>`).join('')}
      <tr class="tot"><td>Total</td><td class="r">${rp(tot)}</td><td class="r">${rp(prev)}</td><td class="r">${dec((tot-prev)/prev*100,0)}%</td><td class="r">Rp 486M</td><td></td></tr></tbody></table></div></section>
-    <section class="card col r2" id="recv"><div class="card-h">${itile('receipt')}<div class="ch-t"><h2>Receivables ${infoBtn('piutang')}</h2><p>Rp 2.14B total · Rp 486M overdue</p></div></div>
+    <section class="card col r2" id="recv"><div class="card-h">${itile('receipt','hl')}<div class="ch-t"><h2>Receivables ${infoBtn('piutang')}</h2><p>Rp 2.14B total · Rp 486M overdue</p></div></div>
      <div class="stale-bar">${ic('tri','i-xs')}<span>Finance data as of Nov 16, 17:00 · 1 day late</span><button class="btn btn-s btn-sm" data-act="req-update">Ask for update</button></div>
      <div style="padding:0 16px"><div class="segbar" style="height:14px">${AGING.map((a,i)=>`<i style="flex:${a[1]};background:${a[2]};animation-delay:${i*60}ms" data-tip="<div class='tt'><b>${a[0]}</b><div class='tt-r'><i style='background:${a[2]}'></i>Amount<span class='tt-v'>${rp(a[1])}</span></div><div class='tt-r'><i style='background:transparent'></i>Share<span class='tt-v n'>${Math.round(a[1]/agTot*100)}%</span></div></div>"></i>`).join('')}</div>
       <div class="leg2" style="margin-top:8px">${AGING.map(a=>`<span><i class="sw" style="background:${a[2]}"></i><em>${a[0]}</em><b>${rp(a[1])}</b></span>`).join('')}</div></div>
@@ -823,10 +1075,14 @@ function viewFinance(){
 
 /* ================= Charts ================= */
 const CH={};
-const ttHTML=(title,rows)=>`<div class='tt'><b>${title}</b>${rows.map(r=>`<div class='tt-r'><i style='background:${r[0]}'></i>${r[1]}<span class='tt-v ${r[3]||''}'>${r[2]}</span></div>`).join('')}</div>`;
+const ttHTML=(title,rows,note)=>`<div class='tt'><b>${title}</b>${rows.map(r=>`<div class='tt-r'><i style='background:${r[0]}'></i>${r[1]}<span class='tt-v ${r[3]||''}'>${r[2]}</span></div>`).join('')}${note?`<div class='tt-n'>${note}</div>`:''}</div>`;
+// bar segment: rounded only on the outer ends of the whole stack (top of the top part, bottom of the
+// bottom part); joins between stacked parts stay square. A single-part bar is rounded at both ends.
+const segPath=(x,y,w,h,rt,rb)=>{const m=Math.min(h/2,w/2);rt=Math.min(rt,m);rb=Math.min(rb,m);
+  return `M${x} ${y+rt}A${rt} ${rt} 0 0 1 ${x+rt} ${y}H${x+w-rt}A${rt} ${rt} 0 0 1 ${x+w} ${y+rt}V${y+h-rb}A${rb} ${rb} 0 0 1 ${x+w-rb} ${y+h}H${x+rb}A${rb} ${rb} 0 0 1 ${x} ${y+h-rb}Z`};
 function stackChart(w,h,o){
-  const H=Math.max(150,h),pl=44,pr=8,pt=o.annot?30:12,pb=26,iw=w-pl-pr,ih=H-pt-pb,n=o.lbl.length;
-  const y=v=>pt+ih*(1-v/o.top),bw=iw/n,barW=Math.max(8,Math.min(52,bw*.6)),rx=Math.min(8,barW/4);
+  const H=Math.max(150,h),pl=44,pr=8,pt=14,pb=26,iw=w-pl-pr,ih=H-pt-pb,n=o.lbl.length;
+  const y=v=>pt+ih*(1-v/o.top),bw=iw/n,barW=Math.max(10,Math.min(104,bw*.78)),rx=Math.min(12,barW/3.2),GAP=4;
   let g='';
   for(let v=0;v<=o.top;v+=o.step)g+=`<line x1="${pl}" x2="${pl+iw}" y1="${y(v)}" y2="${y(v)}" stroke="#E6E7EB" stroke-dasharray="${v?'3 4':'0'}"/><text x="${pl-10}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="#626875">${o.yf(v)}</text>`;
   const ty=y(o.target);
@@ -835,16 +1091,16 @@ function stackChart(w,h,o){
   for(let i=0;i<n;i++){
     const x=pl+i*bw+(bw-barW)/2;let acc=0;const tot=sum(o.series.map(s=>s.v[i]));
     const tg=o.target,ok=tot>=tg*.95;
-    const tip=ttHTML(o.tip[i],[...o.series.map(s=>[s.c,s.n,o.vf(s.v[i]),'n']).reverse(),['transparent','Total vs target',`${Math.round(tot/tg*100)}%`,ok?'':'w']]);
-    g+=`<rect class="hit" x="${pl+i*bw}" y="${pt}" width="${bw}" height="${ih}" rx="6" data-tip="${tip}"/>`;
-    o.series.forEach((s,si)=>{const v=s.v[i];if(!v)return;const y0=y(acc),y1=y(acc+v),gap=si?3:0;
-      g+=`<rect class="gy" style="animation-delay:${i*30}ms;pointer-events:none" x="${x}" y="${y1}" width="${barW}" height="${Math.max(1,y0-y1-gap)}" rx="${rx}" fill="${s.c}"/>`;acc+=v});
-    if(o.totals&&n<=7)g+=`<text x="${x+barW/2}" y="${y(acc)-6}" text-anchor="middle" font-size="12" font-weight="500" fill="${ok?'#4F5562':'#B4471A'}" stroke="#fff" stroke-width="4" paint-order="stroke" style="pointer-events:none">${o.tf?o.tf(tot):tot}</text>`;
+    const tip=ttHTML(o.tip[i],[...o.series.map(s=>[s.c,s.n,o.vf(s.v[i]),'n']).reverse(),['transparent','Total',o.vf(tot),'n'],['transparent','vs target',`${Math.round(tot/tg*100)}%`,ok?'':'w']],o.annot&&o.annot.i===i?o.annot.t:'');
+    g+=`<g class="bcol"><rect class="hit" x="${pl+i*bw}" y="${pt}" width="${bw}" height="${ih}" rx="8" data-tip="${tip}"/>`;
+    const parts=o.series.map((s,si)=>({s,si,v:s.v[i]})).filter(p=>p.v),first=parts[0],last=parts[parts.length-1];
+    parts.forEach(p=>{const y0=y(acc)-(p!==first?GAP:0),y1=y(acc+p.v),hh=Math.max(1.5,y0-y1);
+      g+=`<path class="gy seg" style="animation-delay:${i*40}ms;pointer-events:none" d="${segPath(x,y0-hh,barW,hh,p===last?rx:0,p===first?rx:0)}" fill="${p.s.c}"/>`;acc+=p.v});
+    g+='</g>';
     if(i%every===0||i===n-1)g+=`<text x="${x+barW/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="#4F5562" style="pointer-events:none">${o.lbl[i]}</text>`;
   }
   const tw=o.tLbl.length*6.4+16;g+=`<g style="pointer-events:none"><rect x="${pl+iw-tw}" y="${ty-22}" width="${tw}" height="18" rx="6" fill="#01040C"/><text x="${pl+iw-tw/2}" y="${ty-9}" text-anchor="middle" font-size="11" font-weight="500" fill="#fff">${o.tLbl}</text></g>`;
-  if(o.annot&&o.annot.i>=0){const cx=pl+o.annot.i*bw+bw/2,tw2=o.annot.t.length*6.2+16,ax=Math.min(Math.max(pl,cx-tw2/2),pl+iw-tw2);
-    g+=`<g style="pointer-events:none"><line x1="${cx}" x2="${cx}" y1="22" y2="${ty-2}" stroke="#EF4444" stroke-dasharray="2 3"/><rect x="${ax}" y="4" width="${tw2}" height="18" rx="6" fill="#FDEDED"/><text x="${ax+tw2/2}" y="17" text-anchor="middle" font-size="11" font-weight="500" fill="#B42318">${o.annot.t}</text></g>`}
+  if(o.annot&&o.annot.i>=0){const cx=pl+o.annot.i*bw+bw/2;g+=`<circle cx="${cx}" cy="${H-pb+2}" r="3" fill="#EF4444" style="pointer-events:none"/>`}
   return `<svg viewBox="0 0 ${w} ${H}" height="${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
 }
 function lineChart(w,h,o){
@@ -859,17 +1115,25 @@ function lineChart(w,h,o){
     s.v.forEach((v,i)=>g+=`<circle cx="${x(i)}" cy="${y(v)}" r="${i===n-1?4:3}" fill="#fff" stroke="${v>o.limit&&!s.dim?'#EF4444':s.c}" stroke-width="2" opacity="${s.dim?.3:1}" style="pointer-events:none"/>`)});
   return `<svg viewBox="0 0 ${w} ${H}" height="${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
 }
-function drawCharts(){document.querySelectorAll('[data-chart]').forEach(c=>{const f=CH[c.dataset.chart];if(f){c.innerHTML='';c.innerHTML=f(Math.max(260,c.clientWidth-24),Math.max(150,c.clientHeight-4))}})}
+function drawCharts(){document.querySelectorAll('[data-chart]').forEach(c=>{const f=CH[c.dataset.chart];if(f){c.innerHTML='';c.innerHTML=f(Math.max(260,c.clientWidth-24),Math.max(150,c.clientHeight-4));c.dataset.sz=c.clientWidth+'x'+c.clientHeight;chartRO&&chartRO.observe(c)}})}
+// redraw when a chart's box settles to a new size (fonts, sibling cards, layout changes)
+let roT;const chartRO=window.ResizeObserver?new ResizeObserver(es=>{if(es.some(e=>e.target.isConnected&&e.target.dataset.sz!==e.target.clientWidth+'x'+e.target.clientHeight)){clearTimeout(roT);roT=setTimeout(drawCharts,80)}}):null;
 let rT;addEventListener('resize',()=>{clearTimeout(rT);rT=setTimeout(()=>{drawCharts();renderFab()},120)});
 const tip=el('tip');
 document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(t){tip.innerHTML=t.dataset.tip;tip.classList.add('on')}});
 document.addEventListener('mousemove',e=>{if(!tip.classList.contains('on'))return;let x=e.clientX+16,y=e.clientY+16;if(x+tip.offsetWidth>innerWidth-8)x=e.clientX-tip.offsetWidth-16;if(y+tip.offsetHeight>innerHeight-8)y=e.clientY-tip.offsetHeight-16;tip.style.left=x+'px';tip.style.top=y+'px'});
 document.addEventListener('mouseout',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(t)tip.classList.remove('on')});
+document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.classList.remove('on');return}
+  tip.innerHTML=t.dataset.tip;tip.classList.add('on');let x=Math.min(e.clientX-tip.offsetWidth/2,innerWidth-tip.offsetWidth-8),y=e.clientY-tip.offsetHeight-16;if(y<8)y=e.clientY+16;tip.style.left=Math.max(8,x)+'px';tip.style.top=y+'px'});
 
 /* ================= Assistant answers ================= */
 const conf=(lv,txt)=>`<div class="conf"><span class="meter ${lv}" aria-hidden="true"><i></i><i></i><i></i></span><span>Confidence <b>${{hi:'high',md:'medium',lo:'low'}[lv]}</b> · ${txt}</span></div>`;
 const chip=(k,l,st)=>`<button class="src ${st?'stale':''}" data-act="src" data-src="${k}">${ic(st?'tri':'db','i-xs')}${l}</button>`;
-const srcs=c=>`<div class="a-src"><span>Based on</span><div class="src-row">${c}</div></div>`;
+const srcs=c=>`<div class="a-src"><span>Sources</span><div class="src-row">${c}</div></div>`;
+// answer layout: content → next-step buttons → one quiet footer box (confidence, then sources)
+function shapeAns(h){const t=document.createElement('template');t.innerHTML=h;const f=t.content,src=f.querySelector('.a-src'),cf=f.querySelector('.conf');
+  if(src||cf){const m=document.createElement('div');m.className='a-meta';if(cf)m.append(cf);if(src)m.append(src);f.append(m)}
+  const d=document.createElement('div');d.append(f);return d.innerHTML}
 const ANS={
  omzet:{steps:['Reading sales for Nov 11–17','Comparing each distributor with last week','Checking receivables and production'],follow:['Who pays late?','Line 2 losses today'],html:()=>`
   <div class="a-head">Revenue this week is Rp 2.59B, down Rp 200M (−7%) from last week and 12% below the Rp 2.94B target.</div>
@@ -927,7 +1191,7 @@ function routeQ(q){const s=q.toLowerCase();
 function chatShell(){return `<div class="grab"></div><div class="dlg-h">${avatar(S.thinking?'think':'idle')}<div class="t"><h2 id="dlgTitle">Sari</h2><div class="sub">Reads internal data only · every number shows its source</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div><div class="dlg-b" id="chatBody"><div class="thread" id="thread"></div></div><div class="dlg-f" id="chatFoot"></div>`}
 function renderChat(){
   const th=el('thread');if(!th)return;
-  th.innerHTML=S.convo.map(e=>`<div class="q">${esc(e.q)}</div><div class="a">${avatar(e.done?(e.key==='err'?'worry':'idle'):'think')}${e.done?`<div class="a-card ${ANS[e.key].cls||''}"><div class="a-who">Sari</div>${e.html}</div>`
+  th.innerHTML=S.convo.map(e=>`<div class="q">${esc(e.q)}</div><div class="a">${aiBubble(!e.done)}${e.done?`<div class="a-card ${ANS[e.key].cls||''}"><div class="a-who">Sari</div>${e.html}</div>`
     :`<div class="a-card"><div class="a-who">Sari is checking</div><div class="think">${ANS[e.key].steps.slice(0,e.step+1).map((s,i)=>i<e.step?`<div class="done">${ic('ck','i-xs ck')}${s}</div>`:`<div><span class="spin" style="color:var(--accent)"></span>${s}…</div>`).join('')}</div></div>`}</div>`).join('');
   const last=S.convo[S.convo.length-1],f=last&&last.done?ANS[last.key].follow:[];
   el('chatFoot').innerHTML=`<div class="follow">${f.length?`<div class="sec-l">Follow up</div><div class="chips">${f.map(q=>`<button data-act="ask" data-q="${q}" ${S.thinking?'disabled':''}>${q}</button>`).join('')}</div>`:''}${askForm('Ask a follow-up…')}</div>`;
@@ -939,7 +1203,7 @@ function ask(q){
   const key=(S.mode==='error'||S.mode==='offline')?'err':routeQ(q);
   const e={q,key,step:0,done:false};S.convo.push(e);S.lastQ=q;openChat();setThinking(true);
   const a=ANS[key];
-  const tick=()=>{if(e.step<a.steps.length-1){e.step++;renderChat();setTimeout(tick,650)}else setTimeout(()=>{e.done=true;e.html=a.html();setThinking(false);renderChat();if(S.queue.length)setTimeout(()=>ask(S.queue.shift()),900)},750)};
+  const tick=()=>{if(e.step<a.steps.length-1){e.step++;renderChat();setTimeout(tick,650)}else setTimeout(()=>{e.done=true;e.html=shapeAns(a.html());setThinking(false);renderChat();if(S.queue.length)setTimeout(()=>ask(S.queue.shift()),900)},750)};
   renderChat();setTimeout(tick,650);
 }
 function setThinking(on){S.thinking=on;const bc=el('buddyCard');if(bc)bc.outerHTML=buddyCardHTML();renderFab()}
@@ -949,6 +1213,7 @@ let lastFocus=null;
 function openDialog(html,cls='',state={}){
   const ov=el('ov'),d=el('dlg');if(!ov.classList.contains('open'))lastFocus=document.activeElement;
   d.className='dlg '+cls;d.innerHTML=html;S.dlg=state;ov.classList.add('open');document.body.style.overflow='hidden';renderFab();
+  requestAnimationFrame(()=>d.querySelectorAll('.prompts').forEach(updPrompts));
   setTimeout(()=>{const f=d.querySelector('[data-autofocus]')||d.querySelector('.x-btn');f&&f.focus({preventScroll:true})},60);
 }
 function closeDialog(){el('ov').classList.remove('open');S.dlg=null;document.body.style.overflow='';renderFab();if(lastFocus&&document.contains(lastFocus))lastFocus.focus({preventScroll:true})}
@@ -990,7 +1255,7 @@ function sendTask(){
 }
 function allAlerts(sec){
   const open=openAlerts(),hd=handledAlerts();
-  openDialog(`<div class="grab"></div><div class="dlg-h">${itile('bell')}<div class="t"><h2 id="dlgTitle">All alerts</h2><div class="sub">${open.length} need attention · ${hd.length} in progress</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div>
+  openDialog(`<div class="grab"></div><div class="dlg-h">${itile('siren','hl')}<div class="t"><h2 id="dlgTitle">All alerts</h2><div class="sub">${open.length} need attention · ${hd.length} in progress</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div>
    <div class="dlg-b" style="padding:0 0 16px"><div class="d-l" style="padding:0 20px">Needs attention</div><div class="al-list" style="padding:0 20px">${open.map(alertItem).join('')||'<p class="muted">Nothing right now.</p>'}</div>
    <div class="d-l" id="hdSec" style="padding:0 20px;margin-top:18px">In progress</div><div class="rows" style="padding:0 20px">${hd.map(a=>`<div class="row"><span class="sdot prog"></span><div class="n"><b>${a.title()}</b><span>${S.handled[a.id].ack?'Marked as seen':`${S.handled[a.id].pic} · due ${S.handled[a.id].due}`}</span></div><button class="btn btn-g btn-sm" data-act="undo" data-id="${a.id}">Undo</button></div>`).join('')||'<p class="muted" style="font-size:13px">Nothing yet.</p>'}</div></div>`,'',{kind:'list'});
   if(sec==='handled')setTimeout(()=>el('hdSec').scrollIntoView({block:'start'}),80);
@@ -1001,7 +1266,7 @@ function openInfo(k){
    <div class="dlg-b"><div class="kv"><span>Source</span><div>${x.s}</div><span>How often</span><div>${x.f}</div><span>Last update</span><div>${x.stale?`<span class="tag t-warn">${ic('tri','i-xs')}${x.u()}</span>`:x.u()}</div></div>
    <div class="note" style="margin-top:14px">${ic('wa','i-xs')}<span>Data is never read from WhatsApp groups. WhatsApp is only used to send alerts to you and the owners.</span></div></div>`,'',{kind:'info'});
 }
-function buddySheet(){openDialog(`<div class="grab"></div><div class="dlg-h">${avatar()}<div class="t"><h2 id="dlgTitle">Sari</h2><div class="sub">Your assistant · reads factory data</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div><div class="dlg-b"><div class="buddy-b" style="padding:0">${buddyBody()}</div></div><div class="dlg-f"><div style="flex:1">${askForm()}</div></div>`,'',{kind:'buddy'})}
+function buddySheet(){openDialog(`<div class="grab"></div><div class="dlg-h">${avatar(S.thinking?'think':(curTip()[0].mood||'idle'))}<div class="t"><h2 id="dlgTitle">Sari</h2><div class="sub">AI assistant · reads factory data</div></div><button class="x-btn" data-act="close" aria-label="Close">${ic('x','i-sm')}</button></div><div class="dlg-b"><div class="buddy-b" style="padding:0">${buddyBody()}</div></div><div class="dlg-f">${askBlock()}</div>`,'',{kind:'buddy'})}
 
 /* ================= Demo & simulation ================= */
 const REASONS=['Sensor / oven','Out of material','Packing jam','Power cut'];
@@ -1050,14 +1315,26 @@ function toast(msg,type='ok',action){
 /* ================= Routing & render ================= */
 function go(tab,anc){location.hash=tab;if(anc)setTimeout(()=>{const a=el(anc);a&&a.scrollIntoView({block:'nearest',behavior:'smooth'})},150)}
 function route(){const h=location.hash.slice(1);const t=TABS.some(x=>x[0]===h)?h:'overview';if(t!=='finance')S.aiFilter=false;S.tab=t;render(true)}
+/* Loading skeletons: same grid + card structure as each tab, so nothing jumps when data arrives */
+const skHead=()=>`<div class="card-h"><div class="sk" style="width:24px;height:22px;border-radius:6px;flex:none"></div><div class="ch-t"><div class="sk" style="width:44%;height:14px"></div><div class="sk" style="width:66%;height:11px;margin-top:7px"></div></div></div>`;
+const skChart=(n=7)=>`<section class="card col">${skHead()}<div class="sk-leg"><span class="sk"></span><span class="sk"></span><span class="sk"></span></div><div class="sk-chart">${Array.from({length:n},(_,i)=>`<i class="sk" style="height:${[72,64,58,76,66,70,61][i%7]}%"></i>`).join('')}</div></section>`;
+const skRows=n=>`<div class="sk-rows">${Array.from({length:n},()=>`<div><span><i class="sk" style="width:58%;height:12px"></i><i class="sk" style="width:36%;height:10px;margin-top:6px"></i></span><i class="sk" style="width:64px;height:12px"></i></div>`).join('')}</div>`;
+const skList=(n,cls='',style='')=>`<section class="card col ${cls}" style="${style}">${skHead()}${skRows(n)}</section>`;
+const skMinis=()=>`<div class="minis">${[1,2,3,4].map(()=>`<div class="card mini"><div class="ch-t" style="flex:1"><div class="sk" style="width:58%;height:11px"></div><div class="sk" style="width:38%;height:16px;margin-top:8px"></div></div></div>`).join('')}</div>`;
+const skLineCard=()=>`<section class="card lc">${skHead()}<div class="sk-lc"><div class="sk" style="height:54px;border-radius:10px"></div><div class="sk" style="height:10px;width:70%"></div><div class="sk" style="height:8px"></div><div class="sk" style="height:10px;width:55%"></div></div></section>`;
+const SKEL={
+  production:()=>`<div class="lines">${skLineCard()+skLineCard()+skLineCard()}</div><div class="g2">${skChart()}${skChart()}</div>`,
+  stock:()=>`${skKpis()}<div class="g2">${skList(6)}<div class="stack">${skList(3,'','flex:1.15')}${skList(3,'','flex:1')}</div></div>`,
+  finance:()=>`${skKpis()}<div class="fgrid">${skChart()}${skList(5)}${skList(7,'r2')}</div>`
+};
 function render(anim=true){
   renderTop();
   const v=el('view');v.classList.toggle('static',!anim);
   if(S.tab==='overview')v.innerHTML=`${statusHTML()}${kpisHTML()}<div class="ov-bottom">${chartCardHTML()}${alertsCardHTML()}${S.mode==='loading'?'<aside class="card col" id="buddyCard"></aside>':buddyCardHTML()}</div>`;
-  else if(S.mode==='loading')v.innerHTML=`<div class="minis">${[1,2,3,4].map(()=>`<div class="card mini"><div class="sk" style="width:100%;height:40px"></div></div>`).join('')}</div><div class="g2"><div class="card"><div class="sk" style="margin:16px;height:calc(100% - 32px)"></div></div><div class="card"></div></div>`;
+  else if(S.mode==='loading')v.innerHTML=SKEL[S.tab]();
   else v.innerHTML=`<div class="view-in" style="display:contents">${{production:viewProduction,stock:viewStock,finance:viewFinance}[S.tab]()}</div>`;
   if(anim)v.firstElementChild&&v.classList.add('enter');
-  requestAnimationFrame(drawCharts);
+  requestAnimationFrame(()=>{drawCharts();document.querySelectorAll('.prompts').forEach(updPrompts)});
   renderFab();
   el('demoBtn').innerHTML=ic('sliders','i-sm');
 }
@@ -1087,8 +1364,13 @@ document.addEventListener('click',e=>{
     case'retry-ask':ask(S.lastQ);break;
     case'open-chat':openChat();break;
     case'buddy':buddySheet();break;
-    case'next-tip':S.tipIdx++;if(S.dlg&&S.dlg.kind==='buddy')buddySheet();else render(false);break;
+    case'al-more':S.alMore=!S.alMore;render(false);break;
+    case'next-tip':stepTip(1);break;
+    case'prompts-more':{const r=t.parentElement.querySelector('.prompts');r.scrollBy({left:Math.max(160,r.clientWidth*.7),behavior:'smooth'});break}
+    case'prev-tip':stepTip(-1);break;
+    case'pause-tip':S.tipPaused=!S.tipPaused;refreshInsight();const pb=document.querySelector('[data-act=pause-tip]');if(pb)pb.focus();break;
     case'hide-tip':S.fabTip=false;renderFab();break;
+    case'no-invite':S.noInvite=true;clearTimeout(invT);invState='';renderFab();break;
     case'mic':{const f=t.closest('form'),inp=f.q;t.classList.add('on');inp.value='';inp.placeholder='Listening…';setTimeout(()=>{t.classList.remove('on');inp.placeholder='Ask Sari anything…';ask('Line 2 losses today')},1600);break}
     case'src':{const s=t.dataset.src;closeDialog();if(s==='sales'){S.aiFilter=true;S.fp='7d'}go({sales:'finance',piutang:'finance',prod:'production',stok:'stock'}[s],s==='piutang'?'recv':s==='sales'?'distCard':null);if(s==='prod'){S.pf='L2'}break}
     case'tab':closeDialog();if(S.tab===t.dataset.v)render(true);go(t.dataset.v,t.dataset.anc);break;
