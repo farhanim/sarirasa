@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="10 4 78 92" role="img" aria-label="Sari, asisten Sari Rasa">
+    <circle cx="48" cy="33" r="24" fill="#DE9A45"/><circle cx="48" cy="69" r="24" fill="#DE9A45"/>
+    <circle cx="46.5" cy="31.5" r="22.5" fill="#F6C67E"/><circle cx="46.5" cy="67.5" r="22.5" fill="#F6C67E"/>
+    <path d="M36 63q3-2 6 0M50 72q3-2 6 0M38 79q3-2 6 0M52 60q3-2 6 0" stroke="#E7AD5E" stroke-width="2" stroke-linecap="round" fill="none"/>
+    <ellipse cx="37" cy="17" rx="6" ry="3" fill="#fff" opacity=".5" transform="rotate(-30 37 17)"/>
+    <ellipse cx="36" cy="40" rx="3.6" ry="2.3" fill="#FF8A6B" opacity=".45"/><ellipse cx="60" cy="40" rx="3.6" ry="2.3" fill="#FF8A6B" opacity=".45"/>
+    <ellipse cx="41.5" cy="33" rx="3.4" ry="4.4" fill="#1B1206"/><ellipse cx="54.5" cy="33" rx="3.4" ry="4.4" fill="#1B1206"/><circle cx="42.8" cy="31.3" r="1.3" fill="#fff"/><circle cx="55.8" cy="31.3" r="1.3" fill="#fff"/><path d="M44.5 41.5q3.5 3.4 7 0" stroke="#1B1206" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <g class="hand"><ellipse cx="72" cy="58" rx="5" ry="6.5" fill="#DE9A45" transform="rotate(-20 72 58)"/><ellipse cx="71.4" cy="57.4" rx="4.2" ry="5.6" fill="#F6C67E" transform="rotate(-20 71.4 57.4)"/></g>
+    <path d="M22 34A26 26 0 0 1 74 34" stroke="#2463EB" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <rect x="17" y="27" width="10" height="17" rx="5" fill="#2463EB"/><rect x="19.5" y="30.5" width="5" height="10" rx="2.5" fill="#609FFF"/>
+    <rect x="69" y="27" width="10" height="17" rx="5" fill="#2463EB"/><rect x="71.5" y="30.5" width="5" height="10" rx="2.5" fill="#609FFF"/>
+    <path d="M22 43c0 7.5 6.5 10 14.5 8.6" stroke="#2463EB" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="38.5" cy="51.4" r="3.6" fill="#609FFF" stroke="#2463EB" stroke-width="2"/>
+  </svg>
