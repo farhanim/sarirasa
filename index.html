@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F5F5F5">
+<script>try{const t=localStorage.getItem('fd-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
 <meta name="application-name" content="Fugodash Surya">
 <title>Fugodash Surya · PT Sari Rasa Nusantara</title>
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -31,7 +32,27 @@
   --sh-2:0 1px 2px rgba(1,4,12,.03);
   --sh-3:0 24px 48px rgba(1,4,12,.14),0 2px 6px rgba(1,4,12,.06);
   --ease:cubic-bezier(.22,1,.36,1);
+  --grid:#E6E7EB;color-scheme:light;
 }
+/* Dark theme: follows the system unless the viewer picked a theme (data-theme on <html>) */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#E8ECF4;--bg:#0B0F17;--card:#121826;--raised:#182032;--tile:#1C2436;
+  --line:#222B3D;--line-2:#2E3850;--grid:#263044;
+  --text:#E8ECF4;--text-2:#A9B2C3;--text-3:#8790A3;
+  --accent:#3D7BF2;--accent-2:#6FA8FF;--accent-ink:#93BCFF;--accent-soft:#15213B;--accent-line:#253A63;
+  --c5:#3B465C;
+  --ok-soft:#0F2A1D;--ok-ink:#62D394;--warn-soft:#2E1D12;--warn-ink:#F6A572;--crit-soft:#2E1517;--crit-ink:#FF8E8E;--prog-soft:#1F1A3B;--prog-ink:#B7A6FF;
+  --sh-1:0 1px 2px rgba(0,0,0,.35);--sh-2:0 1px 2px rgba(0,0,0,.35);--sh-3:0 24px 48px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35);
+  color-scheme:dark;}}
+:root[data-theme="dark"]{--ink:#E8ECF4;--bg:#0B0F17;--card:#121826;--raised:#182032;--tile:#1C2436;
+  --line:#222B3D;--line-2:#2E3850;--grid:#263044;
+  --text:#E8ECF4;--text-2:#A9B2C3;--text-3:#8790A3;
+  --accent:#3D7BF2;--accent-2:#6FA8FF;--accent-ink:#93BCFF;--accent-soft:#15213B;--accent-line:#253A63;
+  --c5:#3B465C;
+  --ok-soft:#0F2A1D;--ok-ink:#62D394;--warn-soft:#2E1D12;--warn-ink:#F6A572;--crit-soft:#2E1517;--crit-ink:#FF8E8E;--prog-soft:#1F1A3B;--prog-ink:#B7A6FF;
+  --sh-1:0 1px 2px rgba(0,0,0,.35);--sh-2:0 1px 2px rgba(0,0,0,.35);--sh-3:0 24px 48px rgba(0,0,0,.55),0 2px 6px rgba(0,0,0,.35);
+  color-scheme:dark;}
+:root[data-theme="dark"] .toast.ok .ti{color:#15803D}:root[data-theme="dark"] .toast.err .ti{color:#B42318}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .toast.ok .ti{color:#15803D}:root:not([data-theme="light"]) .toast.err .ti{color:#B42318}}
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{font-family:'Inter Tight',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs-body);line-height:var(--lh-body);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
@@ -166,6 +187,8 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 /* ============ Views ============ */
 .view{display:flex;flex-direction:column;gap:12px;padding-bottom:16px}
 .ov-bottom{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.95fr);gap:12px;flex:1;min-height:0}
+/* Overview hierarchy: what to act on gets the most width (alerts), then the trend, then Sari */
+.ov-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1.15fr) minmax(300px,.85fr);gap:12px;flex:1;min-height:0}
 
 /* Status strip */
 .status{display:grid;grid-template-columns:auto minmax(0,1fr) 240px;gap:12px 20px;align-items:center;padding:12px 16px;flex:none}
@@ -174,7 +197,7 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .st-t{font-size:var(--fs-title);line-height:var(--lh-title);font-weight:600;display:flex;align-items:center;gap:8px}
 .s-ok .st-t{color:var(--ok-ink)}
 /* card tint: state color on the left fading to white */
-.status{--tint:var(--warn-soft);--edge:rgba(240,123,63,.22);background:linear-gradient(90deg,var(--tint) 0%,color-mix(in srgb,var(--tint) 45%,#fff) 22%,#fff 50%);border-color:var(--edge)}
+.status{--tint:var(--warn-soft);--edge:rgba(240,123,63,.22);background:linear-gradient(90deg,var(--tint) 0%,color-mix(in srgb,var(--tint) 45%,var(--card)) 22%,var(--card) 50%);border-color:var(--edge)}
 .status.s-ok{--tint:var(--ok-soft);--edge:rgba(47,184,110,.22)}.status.s-crit{--tint:var(--crit-soft);--edge:rgba(239,68,68,.24)}
 /* status icon: tinted by state, with a ping ring and a small state-specific motion */
 .st-ic{position:relative;flex:none;display:grid;--c:var(--warn);--soft:var(--warn-soft)}
@@ -251,8 +274,8 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 /* Needs attention (striped progress, reference pattern) */
 .al-list{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:0 16px 4px;align-content:start}
 .al{display:block;width:100%;text-align:left;padding:10px 12px;border:0;border-radius:12px;background:var(--raised);transition:background-color .15s}
-.al.live{background:#FFF5F5}
-@media (hover:hover){.al:hover{background:#EFF1F4}.al.live:hover{background:#FDECEC}}
+.al.live{background:color-mix(in srgb,var(--crit-soft) 70%,var(--card))}
+@media (hover:hover){.al:hover{background:var(--tile)}.al.live:hover{background:var(--crit-soft)}}
 .al.fresh{animation:flash 2s ease}
 /* Needs attention card: a light runs around the card border while alerts are open (red if any is critical) */
 .card.attn{position:relative;isolation:isolate;--c:var(--warn);--cs:rgba(240,123,63,.18)}
@@ -265,7 +288,7 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .al-t{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .al-v{font-weight:600;white-space:nowrap}
 .imp-crit{color:var(--crit-ink)}.imp-warn{color:var(--warn-ink)}
-.stripe{position:relative;display:block;height:12px;margin:8px 0 6px;border-radius:3px;background:repeating-linear-gradient(90deg,#E8E9ED 0 3px,transparent 3px 5px)}
+.stripe{position:relative;display:block;height:12px;margin:8px 0 6px;border-radius:3px;background:repeating-linear-gradient(90deg,var(--line-2) 0 3px,transparent 3px 5px)}
 .stripe i{position:absolute;inset:0 auto 0 0;border-radius:3px;transform-origin:left;animation:grow .8s var(--ease) both}
 .stripe .s-crit{background:repeating-linear-gradient(90deg,var(--crit) 0 3px,transparent 3px 5px)}
 .stripe .s-warn{background:repeating-linear-gradient(90deg,var(--warn) 0 3px,transparent 3px 5px)}
@@ -273,6 +296,18 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .al-m{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-cap);line-height:var(--lh-cap);color:var(--text-3)}
 .al-m span:first-child{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .al-m span:last-child{white-space:nowrap;color:var(--text-2)}
+.state{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:28px 20px}
+.state>svg{width:112px;height:94px;flex:none}
+.state b{display:block;font-size:var(--fs-title);line-height:var(--lh-title);font-weight:600}
+.state p{font-size:var(--fs-sm);line-height:var(--lh-sm);color:var(--text-2);max-width:340px;margin:4px auto 0}
+.state-act{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px}
+.state.row{flex-direction:row;text-align:left;padding:12px 16px;gap:16px}
+.state.row>svg{width:76px;height:64px}
+.state.row p{margin:2px 0 0;max-width:640px}.state.row .state-act{justify-content:flex-start;margin-top:10px}
+.state-card{flex:none}
+.state-card.err{border-color:color-mix(in srgb,var(--warn) 35%,transparent);background:linear-gradient(90deg,var(--warn-soft),var(--card) 55%)}
+.state-card.off{background:linear-gradient(90deg,var(--tile),var(--card) 55%)}
+@media (max-width:560px){.state.row{flex-direction:column;align-items:flex-start}.state.row>svg{width:64px;height:54px}}
 .empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:28px 20px}
 .empty b{font-weight:500}.empty p{font-size:var(--fs-sm);color:var(--text-2);max-width:300px}
 
@@ -303,7 +338,7 @@ svg.i-sm{width:16px;height:16px}svg.i-xs{width:14px;height:14px}
 .insight{position:relative;border-radius:14px;padding:12px 14px 16px;min-height:0;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent-line);overflow:hidden;isolation:isolate}
 .insight::before{content:'';position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(36,99,235,.16) 1px,transparent 1.2px);background-size:12px 12px;mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,#000 0%,rgba(0,0,0,.35) 60%,transparent 100%)}
 /* Sari card: tinted, patterned surface so the assistant reads as its own thing */
-#buddyCard{position:relative;isolation:isolate;border-color:var(--accent-line);background:radial-gradient(90% 55% at 100% 0%,rgba(96,159,255,.30),transparent 70%),linear-gradient(180deg,#EAF2FF 0%,#F4F8FF 40%,#FFFFFF 78%)}
+#buddyCard{position:relative;isolation:isolate;border-color:var(--accent-line);background:radial-gradient(90% 55% at 100% 0%,rgba(96,159,255,.30),transparent 70%),linear-gradient(180deg,var(--accent-soft) 0%,color-mix(in srgb,var(--accent-soft) 45%,var(--card)) 40%,var(--card) 78%)}
 #buddyCard::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;background-image:radial-gradient(rgba(36,99,235,.20) 1px,transparent 1.3px);background-size:14px 14px;-webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 35%,transparent 62%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.4) 35%,transparent 62%)}
 #buddyCard .insight{background:var(--card);box-shadow:inset 0 0 0 1px var(--accent-line),0 1px 3px rgba(36,99,235,.08)}
 #buddyCard .insight::before{display:none}
@@ -337,8 +372,8 @@ svg.flip{transform:scaleX(-1)}
 .prompts-wrap{position:relative}
 .prompts{display:flex;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding-bottom:2px}
 .prompts-wrap::before,.prompts-wrap::after{content:'';position:absolute;top:-2px;bottom:0;width:72px;pointer-events:none;z-index:1;transition:opacity .2s}
-.prompts-wrap::after{right:0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85) 55%,#fff);-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 50%);mask-image:linear-gradient(90deg,transparent,#000 50%)}
-.prompts-wrap::before{left:0;width:40px;background:linear-gradient(270deg,rgba(255,255,255,0),#fff);opacity:0}
+.prompts-wrap::after{right:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--card) 85%,transparent) 55%,var(--card));-webkit-backdrop-filter:blur(1.5px);backdrop-filter:blur(1.5px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 50%);mask-image:linear-gradient(90deg,transparent,#000 50%)}
+.prompts-wrap::before{left:0;width:40px;background:linear-gradient(270deg,transparent,var(--card));opacity:0}
 .prompts-wrap.scrolled::before{opacity:1}
 .prompts-wrap.end::after{opacity:0}
 .prompts-more{position:absolute;right:4px;top:50%;translate:0 -50%;z-index:2;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--card);color:var(--text-2);box-shadow:inset 0 0 0 1px var(--line-2),0 2px 8px rgba(1,4,12,.12);transition:opacity .2s,scale .15s ease-out}
@@ -374,7 +409,7 @@ svg.flip{transform:scaleX(-1)}
 /* FAB */
 .fab{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:40;display:none;align-items:flex-end;gap:10px}
 .fab.show{display:flex}
-.fab-btn{width:60px;height:60px;border-radius:18px;background:radial-gradient(120% 90% at 80% 0%,#DCE8FF 0%,#F4F8FF 55%,#FFFFFF 100%);box-shadow:var(--sh-3),0 0 0 4px rgba(96,159,255,.10);display:grid;place-items:end center;flex:none;position:relative;isolation:isolate;transition:scale .15s ease-out}
+.fab-btn{width:60px;height:60px;border-radius:18px;background:radial-gradient(120% 90% at 80% 0%,var(--accent-line) 0%,var(--accent-soft) 55%,var(--card) 100%);box-shadow:var(--sh-3),0 0 0 4px rgba(96,159,255,.10);display:grid;place-items:end center;flex:none;position:relative;isolation:isolate;transition:scale .15s ease-out}
 .fab-btn::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:2px;z-index:-1;background:conic-gradient(from var(--fa,0deg),#609FFF,#8B5CF6,#14B8A6,#2463EB,#609FFF);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);animation:fabRing 6s linear infinite}
 .fab-btn::after{content:'';position:absolute;inset:-6px;border-radius:22px;border:2px solid rgba(96,159,255,.45);opacity:0;animation:fabPing 7s ease-out infinite;pointer-events:none}
 @property --fa{syntax:'<angle>';inherits:false;initial-value:0deg}
@@ -431,7 +466,7 @@ svg.flip{transform:scaleX(-1)}
 .tbl .r{text-align:right}
 .tbl td b{font-weight:500}
 .tbl .sub{display:block;font-size:var(--fs-cap);color:var(--text-3)}
-.tbl tr.hl td{background:#FFF6F6}
+.tbl tr.hl td{background:color-mix(in srgb,var(--crit-soft) 70%,var(--card))}
 .tbl tr.hl td:first-child{box-shadow:inset 3px 0 0 var(--crit)}
 .tbl tr.tot td{font-weight:600;background:var(--raised);border-bottom:0}
 .tbl tr:last-child td{border-bottom:0}
@@ -525,7 +560,7 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .follow{display:grid;gap:8px;width:100%}
 
 /* Skeleton, toast, demo */
-.sk{background:linear-gradient(90deg,var(--raised) 25%,#ECEDF0 50%,var(--raised) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:8px}
+.sk{background:linear-gradient(90deg,var(--raised) 25%,var(--line) 50%,var(--raised) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:8px}
 .sk-leg{display:flex;gap:14px;padding:0 16px 8px}.sk-leg span{width:72px;height:10px}
 .sk-chart{flex:1;min-height:180px;display:flex;align-items:flex-end;gap:14px;padding:8px 16px 18px 52px}
 .sk-chart i{flex:1;border-radius:10px 10px 4px 4px}
@@ -534,7 +569,7 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .sk-rows span{flex:1;display:block}.sk-rows i{display:block}
 .sk-lc{display:grid;gap:12px;padding:0 16px 16px}
 .toasts{position:fixed;left:50%;bottom:24px;translate:-50% 0;display:grid;gap:8px;z-index:80;width:min(440px,calc(100vw - 32px))}
-.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:#F5F5F5;border-radius:12px;padding:10px 12px 10px 14px;box-shadow:var(--sh-3);animation:rise .3s var(--ease) both}
+.toast{display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 12px 10px 14px;box-shadow:var(--sh-3);animation:rise .3s var(--ease) both}
 .toast.ok .ti{color:#5BE39A}.toast.err .ti{color:#FF9B9B}
 .toast span{flex:1}
 .toast button{font-weight:600;color:var(--accent-2);height:30px;padding:0 8px;border-radius:8px}
@@ -542,11 +577,11 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .demo-btn{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:39;width:36px;height:36px;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 1px var(--line-2),var(--sh-1);display:grid;place-items:center;color:var(--text-2)}
 .dseg{display:flex;flex-wrap:wrap;gap:6px}
 .dseg button{height:32px;padding:0 12px;border-radius:8px;box-shadow:inset 0 0 0 1px var(--line-2);font-size:var(--fs-sm);font-weight:500}
-.dseg button.on{background:var(--ink);color:#fff;box-shadow:none}
+.dseg button.on{background:var(--ink);color:var(--card);box-shadow:none}
 .sim{display:grid;gap:8px}
 .sim-r{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:12px;border:1px solid var(--line)}
 .sim-r .n{flex:1}.sim-r .n b{display:block;font-weight:500}.sim-r .n span{font-size:var(--fs-sm);color:var(--text-2)}
-.wa{border-radius:12px;background:#E9F8EF;border:1px solid #C7EED6;padding:10px 12px;font-size:var(--fs-sm)}
+.wa{border-radius:12px;background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 30%,transparent);padding:10px 12px;font-size:var(--fs-sm)}
 .wa .wh{display:flex;justify-content:space-between;font-size:var(--fs-cap);font-weight:600;color:#15803D;margin-bottom:4px}
 .lbl-m{display:none}
 
@@ -596,6 +631,7 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
   .fab-bub{max-width:min(240px,calc(100vw - 150px))}
   .kpi .leg2,.kpi-h .per{display:none}
   .ov-bottom,.g2,.fgrid,.lines{grid-template-columns:1fr;grid-template-rows:none}
+  .ov-grid{grid-template-columns:1fr}
   .fgrid .r2{grid-row:auto;grid-column:auto}
   #buddyCard{display:none}
   .chart{min-height:220px}
@@ -614,6 +650,15 @@ textarea:focus{box-shadow:inset 0 0 0 2px var(--accent)}
   .ask input,textarea{font-size:16px}
 }
 @media (min-width:1024px){.fab.desk-show{display:flex}}
+/* theme switch: new theme grows as a circle from the toggle while the old one gently recedes */
+.theme-fade,.theme-fade *,.theme-fade *::before,.theme-fade *::after{transition:background-color .5s cubic-bezier(.65,0,.35,1),color .5s cubic-bezier(.65,0,.35,1),border-color .5s cubic-bezier(.65,0,.35,1),fill .5s cubic-bezier(.65,0,.35,1),stroke .5s cubic-bezier(.65,0,.35,1),box-shadow .5s cubic-bezier(.65,0,.35,1)!important}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root){z-index:1;animation:themeOut .78s cubic-bezier(.65,0,.35,1) both}
+::view-transition-new(root){z-index:2;animation:themeReveal .78s cubic-bezier(.65,0,.35,1) both}
+@keyframes themeReveal{from{clip-path:circle(0 at var(--vx,100%) var(--vy,0))}to{clip-path:circle(var(--vr,150vmax) at var(--vx,100%) var(--vy,0))}}
+@keyframes themeOut{to{transform:scale(.985);filter:brightness(.92)}}
+.icon-btn.theme-spin svg{animation:themeIcon .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes themeIcon{from{transform:rotate(-120deg) scale(.4);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.ins-prog i{animation:none!important}*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
@@ -651,6 +696,7 @@ const P={
   pack:'<path d="M6 4h12l-.8 2.5c1.1 3.6 1.1 7.4 0 11L18 20H6l.8-2.5c-1.1-3.6-1.1-7.4 0-11Z"/><path d="M6.8 6.5h10.4M6.8 17.5h10.4"/><rect x="9" y="9.5" width="6" height="5" rx="1.5"/>',
   tag:'<path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><circle cx="7.5" cy="7.5" r="1.2"/>',
   snack:'<rect x="5" y="2.5" width="14" height="3.5" rx="1"/><rect x="5" y="18" width="14" height="3.5" rx="1"/><path d="M6.5 6c-1.3 4-1.3 8 0 12M17.5 6c1.3 4 1.3 8 0 12"/><circle cx="12" cy="12" r="2.6"/><path d="M8 4.25h.01M11 4.25h.01M14 4.25h.01M16.5 4.25h.01"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>',
   play:'<path d="m6 3 14 9-14 9V3z"/>',pause:'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
   eye:'<path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/>',
   bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
@@ -821,6 +867,11 @@ function health(){
 
 /* ================= Shell: top bar & tabs ================= */
 const TABS=[['overview','grid','Overview'],['production','snack','Product'],['stock','box','Stock'],['finance','wallet','Finance']];
+// theme: system default, or the viewer's saved pick (data-theme on <html>)
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
+function setTheme(t){if(!S.themeSpin)S.themeSpin=matchMedia('(prefers-reduced-motion: reduce)').matches?false:true;document.documentElement.dataset.theme=t;try{localStorage.setItem('fd-theme',t)}catch(e){}
+  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='dark'?'#0B0F17':'#F5F5F5';renderTop();S.themeSpin=false}
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(!document.documentElement.dataset.theme)renderTop()});
 function renderTop(){
   const n=openAlerts().length;
   const fresh=S.mode==='offline'?`<span class="st warn">${ic('wifioff','i-sm')}Offline · data from ${S.updated}</span>`
@@ -829,7 +880,7 @@ function renderTop(){
   // greeting, date and data freshness live together in one bar on the right
   const chip=`<span class="pill-meta greet"><span>Good morning, <b>Pak Hendra</b></span><i class="sep"></i><span>Wed, Nov 18</span><i class="sep"></i>${fresh}</span>`;
   el('top').innerHTML=`<div class="top-l"><span class="logo"><img src="assets/fugodash-logo.svg" alt=""></span><div class="brand"><h1>Fugodash Surya</h1><p><span class="lbl-d">for PT Sari Rasa Nusantara</span><span class="lbl-m ${S.mode==='offline'||S.mode==='error'?'warn':''}">${S.mode==='offline'?'Offline · data from '+S.updated:S.mode==='error'?'Update failed':'Updated '+S.updated}</span></p></div></div>
-   <div class="top-r">${chip}<button class="icon-btn" id="refreshBtn" data-act="refresh" aria-label="Refresh data">${ic('refresh','i-sm')}</button><button class="icon-btn" data-act="all-alerts" aria-label="${n} alerts">${ic('bell','i-sm')}${n?`<span class="badge">${n}</span>`:''}</button></div>`;
+   <div class="top-r">${chip}<button class="icon-btn ${S.themeSpin?'theme-spin':''}" data-act="theme" aria-label="${isDark()?'Switch to light mode':'Switch to dark mode'}">${ic(isDark()?'sun':'moon','i-sm')}</button><button class="icon-btn" id="refreshBtn" data-act="refresh" aria-label="Refresh data">${ic('refresh','i-sm')}</button><button class="icon-btn" data-act="all-alerts" aria-label="${n} alerts">${ic('bell','i-sm')}${n?`<span class="badge">${n}</span>`:''}</button></div>`;
   el('tabs').innerHTML=TABS.map(([k,i,l])=>`<button role="tab" aria-selected="${S.tab===k}" data-act="tab" data-v="${k}">${ic(i,'i-sm')}${l}</button>`).join('');
   el('tools').innerHTML=tools();
 }
@@ -842,13 +893,39 @@ function tools(){
 }
 
 /* ================= Overview ================= */
+/* ================= Illustrated states (sync error, offline, empty) ================= */
+const CLOUD='<path d="M34 72a16 16 0 0 1 2-31.9A22 22 0 0 1 78 34a18 18 0 0 1 8 38Z"';
+const BADGE=(c,glyph)=>`<circle cx="88" cy="70" r="13" fill="${c}" stroke="var(--card)" stroke-width="3"/>${glyph}`;
+const BANG='<rect x="86.5" y="62" width="3" height="9.5" rx="1.5" fill="#fff"/><circle cx="88" cy="76" r="1.9" fill="#fff"/>';
+const ILL={
+  sync:`<ellipse cx="60" cy="90" rx="36" ry="4.5" fill="var(--line)"/>${CLOUD} fill="var(--accent-soft)" stroke="var(--accent-line)" stroke-width="2"/>
+    <g stroke="var(--accent)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M49 54a11 11 0 0 1 19.5-7"/><path d="M69.5 40v7.5H62"/><path d="M71 60a11 11 0 0 1-19.5 7"/><path d="M50.5 74v-7.5H58"/></g>${BADGE('var(--warn)',BANG)}`,
+  offline:`<ellipse cx="60" cy="90" rx="36" ry="4.5" fill="var(--line)"/>${CLOUD} fill="var(--tile)" stroke="var(--text-3)" stroke-width="2" stroke-dasharray="5 4"/>
+    <path d="M44 36l34 38" stroke="var(--text-3)" stroke-width="4" stroke-linecap="round"/>${BADGE('var(--text-3)',BANG)}`,
+  clear:`<ellipse cx="60" cy="92" rx="34" ry="4.5" fill="var(--line)"/><rect x="34" y="20" width="50" height="64" rx="9" fill="var(--card)" stroke="var(--accent-line)" stroke-width="2"/>
+    <rect x="47" y="14" width="24" height="11" rx="4" fill="var(--accent-soft)" stroke="var(--accent-line)" stroke-width="2"/>
+    ${[38,51,64].map(y=>`<rect x="43" y="${y}" width="7" height="7" rx="2" fill="var(--accent-2)"/><rect x="54" y="${y+1.5}" width="${y===64?14:22}" height="4" rx="2" fill="var(--line-2)"/>`).join('')}
+    <path d="M24 30c.6 4 2 5.4 6 6-4 .6-5.4 2-6 6-.6-4-2-5.4-6-6 4-.6 5.4-2 6-6Z" fill="var(--accent-2)"/>
+    ${BADGE('var(--ok)','<path d="m82.5 70 3.8 3.8 7-7.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>').replaceAll('cy="70"','cy="72"').replace('m82.5 70','m82.5 72')}`,
+  nomatch:`<ellipse cx="58" cy="92" rx="34" ry="4.5" fill="var(--line)"/><rect x="26" y="20" width="56" height="60" rx="10" fill="var(--card)" stroke="var(--accent-line)" stroke-width="2"/>
+    ${[34,46,58].map(y=>`<rect x="36" y="${y}" width="${y===58?20:34}" height="5" rx="2.5" fill="var(--line-2)"/>`).join('')}
+    <circle cx="78" cy="62" r="13" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="4"/><path d="m87.5 71.5 10 10" stroke="var(--accent)" stroke-width="5" stroke-linecap="round"/>`
+};
+// o: {ill,title,text,acts,row,tone}
+const stateBox=o=>`<div class="state ${o.row?'row':''}" role="${o.tone?'alert':'status'}"><svg viewBox="0 0 120 100" aria-hidden="true">${ILL[o.ill]}</svg><div class="state-t"><b>${o.title}</b><p>${o.text}</p>${o.acts?`<div class="state-act">${o.acts}</div>`:''}</div></div>`;
+// top-of-tab banner for sync problems: offline on every tab, production sync error where production data shows
+function syncBanner(){
+  if(S.mode==='offline')return `<section class="card state-card off">${stateBox({ill:'offline',row:true,tone:1,title:"You're offline",text:`Showing the last data from ${S.updated}. Numbers update again as soon as the connection is back.`,acts:`<button class="btn btn-s btn-sm" data-act="retry">${ic('refresh','i-xs')}Try again</button>`})}</section>`;
+  if(S.mode==='error'&&(S.tab==='overview'||S.tab==='production'))return `<section class="card state-card err">${stateBox({ill:'sync',row:true,tone:1,title:'Production data didn\'t sync',text:'Line counters stopped sending at 05:30. Output, downtime and rejects may be out of date; sales, stock and finance are still current.',acts:`<button class="btn btn-p btn-sm" data-act="retry">${ic('refresh','i-xs')}Try again</button><button class="btn btn-s btn-sm" data-act="info" data-k="prod">Where this data comes from</button>`})}</section>`;
+  return '';
+}
 function statusHTML(){
   if(S.mode==='loading')return `<section class="card status"><div class="st-main"><div class="sk" style="width:40px;height:40px;border-radius:11px"></div><div><div class="sk" style="width:90px;height:10px"></div><div class="sk" style="width:70px;height:16px;margin-top:6px"></div></div></div><div class="sk" style="height:14px"></div><div class="sk" style="height:6px"></div></section>`;
   const h=health();
   return `<section class="card status s-${h.lvl}" aria-live="polite"><div class="st-main"><span class="st-ic">${itile(h.icon,'lg')}</span><div><div class="st-l">Business today</div><div class="st-t"><span class="sdot ${h.lvl}"></span>${h.word}</div></div></div>
    <p class="st-text">${h.text} <b>${h.n?`${h.n} items need your attention.`:'Nothing is waiting for you.'}</b></p>
    <div class="scale" role="img" aria-label="Status scale, now ${h.word}">${[['ok','On track'],['warn','Watch'],['crit','Critical']].map(([k,l])=>`<div class="${k} ${h.lvl===k?'on':''}"><i></i><span>${l}</span></div>`).join('')}</div>
-   ${S.mode==='error'?`<div class="st-warn" role="alert">${ic('tri','i-sm')}<span>Production data hasn't updated since 05:30. Other numbers are still usable.</span><button class="btn btn-s btn-sm" data-act="retry">Try again</button></div>`:''}</section>`;
+   ${false?`<div class="st-warn" role="alert">${ic('tri','i-sm')}<span>Production data hasn't updated since 05:30. Other numbers are still usable.</span><button class="btn btn-s btn-sm" data-act="retry">Try again</button></div>`:''}</section>`;
 }
 function kpis(){
   const st=BAHAN.map(b=>bst(b.d));
@@ -911,7 +988,7 @@ function alertsCardHTML(){
   const open=openAlerts(),hd=handledAlerts();
   return `<section class="card col ${open.length?`attn attn-${open.some(a=>a.sev==='crit')?'crit':'warn'}`:''}" aria-label="Needs attention"><div class="card-h">${itile('siren','hl')}<div class="ch-t"><h2>Needs attention <span class="count ${open.length?'':'zero'}">${open.length}</span></h2><p>Most costly first</p></div><button class="btn btn-s btn-sm" data-act="all-alerts">View all</button></div>
    <div class="col-b">${open.length?`<div class="al-list">${(S.alMore?open:open.slice(0,3)).map(alertItem).join('')}${open.length>3?`<button class="al-more ${S.alMore?'open':''}" data-act="al-more" aria-expanded="${!!S.alMore}">${S.alMore?'Show less':`Show ${open.length-3} more`}${ic('chev','i-xs')}</button>`:''}</div>`
-    :`<div class="empty">${itile('check','lg')}<b>Nothing needs you right now</b><p>${S.mode==='clear'?'All lines running, stock is fine, and no new late payments.':'Every alert has an owner.'}</p></div>`}</div>
+    :`${stateBox({ill:'clear',title:'Nothing needs you right now',text:S.mode==='clear'?'All lines running, stock is fine, and no new late payments.':'Every alert has an owner. I\'ll flag anything new here.',acts:hd.length?'':`<button class="btn btn-s btn-sm" data-act="ask" data-q="Why is revenue down?">${ic('spark','i-xs')}Ask Sari for a summary</button>`})}`}</div>
    <div class="card-f">${hd.length?`<button class="link" data-act="all-alerts" data-sec="handled"><span class="sdot prog"></span>In progress (${hd.length}) ${ic('chev','i-xs')}</button>`:`<span class="muted" style="font-size:12px">Tap an alert to assign an owner</span>`}</div></section>`;
 }
 
@@ -1014,7 +1091,7 @@ function viewStock(){
      <td><span class="cover"><span class="track"><i class="f-${s}" style="width:${Math.min(100,b.d/14*100)}%"></i><span class="mk" style="left:${3/14*100}%;background:var(--text-3)"></span><span class="mk" style="left:${7/14*100}%;background:var(--text-3)"></span></span><span class="tag t-${s}">${b.d} days</span></span></td>
      <td class="r">${b.lead} d</td>
      <td>${b.po==='none'?`<span class="tag ${s==='crit'?'t-crit':'t-warn'}">No PO</span>`:b.po?`<span class="tag t-prog">${b.po}</span>`:'<span class="muted">—</span>'}</td>
-     <td class="r">${b.al?(h?`<span class="tag t-prog">${h.pic}</span>`:`<button class="btn btn-s btn-sm" data-act="assign-open" data-id="${b.al}">Order</button>`):''}</td></tr>`}).join('')||`<tr><td colspan="7" style="text-align:center;padding:24px" class="muted">No items match this filter</td></tr>`;
+     <td class="r">${b.al?(h?`<span class="tag t-prog">${h.pic}</span>`:`<button class="btn btn-s btn-sm" data-act="assign-open" data-id="${b.al}">Order</button>`):''}</td></tr>`}).join('')||`<tr><td colspan="7" style="padding:0">${stateBox({ill:'nomatch',title:'No items match this filter',text:'Nothing needs action in this group right now. Clear the filter to see every material.',acts:'<button class="btn btn-s btn-sm" data-act="clear-stock-filter">Show all materials</button>'})}</td></tr>`;
   const fgTot=sum(PROD.L1?LK.map(k=>PROD[k].fg):[]);
   const bs=BAHAN.map(b=>bst(b.d)),nC=bs.filter(x=>x==='crit').length,nW=bs.filter(x=>x==='warn').length,nT=BAHAN.length;
   const crit=BAHAN.filter(b=>bst(b.d)==='crit'),watch=BAHAN.filter(b=>bst(b.d)==='warn');
@@ -1084,9 +1161,9 @@ function stackChart(w,h,o){
   const H=Math.max(150,h),pl=44,pr=8,pt=14,pb=26,iw=w-pl-pr,ih=H-pt-pb,n=o.lbl.length;
   const y=v=>pt+ih*(1-v/o.top),bw=iw/n,barW=Math.max(10,Math.min(104,bw*.78)),rx=Math.min(12,barW/3.2),GAP=4;
   let g='';
-  for(let v=0;v<=o.top;v+=o.step)g+=`<line x1="${pl}" x2="${pl+iw}" y1="${y(v)}" y2="${y(v)}" stroke="#E6E7EB" stroke-dasharray="${v?'3 4':'0'}"/><text x="${pl-10}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="#626875">${o.yf(v)}</text>`;
+  for(let v=0;v<=o.top;v+=o.step)g+=`<line x1="${pl}" x2="${pl+iw}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-dasharray="${v?'3 4':'0'}"/><text x="${pl-10}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--text-3)">${o.yf(v)}</text>`;
   const ty=y(o.target);
-  g+=`<line x1="${pl}" x2="${pl+iw}" y1="${ty}" y2="${ty}" stroke="#01040C" stroke-width="1.5" stroke-dasharray="6 4" style="pointer-events:none"/>`;
+  g+=`<line x1="${pl}" x2="${pl+iw}" y1="${ty}" y2="${ty}" stroke="var(--text)" stroke-width="1.5" stroke-dasharray="6 4" style="pointer-events:none"/>`;
   const every=Math.ceil(n/Math.max(1,Math.floor(iw/44)));
   for(let i=0;i<n;i++){
     const x=pl+i*bw+(bw-barW)/2;let acc=0;const tot=sum(o.series.map(s=>s.v[i]));
@@ -1097,22 +1174,22 @@ function stackChart(w,h,o){
     parts.forEach(p=>{const y0=y(acc)-(p!==first?GAP:0),y1=y(acc+p.v),hh=Math.max(1.5,y0-y1);
       g+=`<path class="gy seg" style="animation-delay:${i*40}ms;pointer-events:none" d="${segPath(x,y0-hh,barW,hh,p===last?rx:0,p===first?rx:0)}" fill="${p.s.c}"/>`;acc+=p.v});
     g+='</g>';
-    if(i%every===0||i===n-1)g+=`<text x="${x+barW/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="#4F5562" style="pointer-events:none">${o.lbl[i]}</text>`;
+    if(i%every===0||i===n-1)g+=`<text x="${x+barW/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--text-2)" style="pointer-events:none">${o.lbl[i]}</text>`;
   }
-  const tw=o.tLbl.length*6.4+16;g+=`<g style="pointer-events:none"><rect x="${pl+iw-tw}" y="${ty-22}" width="${tw}" height="18" rx="6" fill="#01040C"/><text x="${pl+iw-tw/2}" y="${ty-9}" text-anchor="middle" font-size="11" font-weight="500" fill="#fff">${o.tLbl}</text></g>`;
+  const tw=o.tLbl.length*6.4+16;g+=`<g style="pointer-events:none"><rect x="${pl+iw-tw}" y="${ty-22}" width="${tw}" height="18" rx="6" fill="var(--text)"/><text x="${pl+iw-tw/2}" y="${ty-9}" text-anchor="middle" font-size="11" font-weight="500" fill="var(--card)">${o.tLbl}</text></g>`;
   if(o.annot&&o.annot.i>=0){const cx=pl+o.annot.i*bw+bw/2;g+=`<circle cx="${cx}" cy="${H-pb+2}" r="3" fill="#EF4444" style="pointer-events:none"/>`}
   return `<svg viewBox="0 0 ${w} ${H}" height="${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
 }
 function lineChart(w,h,o){
   const H=Math.max(150,h),pl=36,pr=12,pt=14,pb=26,iw=w-pl-pr,ih=H-pt-pb,n=o.lbl.length;
   const x=i=>pl+iw*(i+.5)/n,y=v=>pt+ih*(1-(v-o.min)/(o.max-o.min));let g='';
-  for(let v=o.min;v<=o.max;v+=o.step)g+=`<line x1="${pl}" x2="${pl+iw}" y1="${y(v)}" y2="${y(v)}" stroke="#E6E7EB" stroke-dasharray="${v?'3 4':'0'}"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="#626875">${o.yf(v)}</text>`;
-  g+=`<rect x="${pl}" y="${pt}" width="${iw}" height="${y(o.limit)-pt}" fill="#FDEDED" opacity=".55"/><line x1="${pl}" x2="${pl+iw}" y1="${y(o.limit)}" y2="${y(o.limit)}" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="6 4"/>`;
-  o.lbl.forEach((l,i)=>{g+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="12" fill="#4F5562">${l.split(' ')[1]}</text>`;
+  for(let v=o.min;v<=o.max;v+=o.step)g+=`<line x1="${pl}" x2="${pl+iw}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)" stroke-dasharray="${v?'3 4':'0'}"/><text x="${pl-8}" y="${y(v)+4}" text-anchor="end" font-size="12" fill="var(--text-3)">${o.yf(v)}</text>`;
+  g+=`<rect x="${pl}" y="${pt}" width="${iw}" height="${y(o.limit)-pt}" fill="var(--crit-soft)" opacity=".55"/><line x1="${pl}" x2="${pl+iw}" y1="${y(o.limit)}" y2="${y(o.limit)}" stroke="#EF4444" stroke-width="1.5" stroke-dasharray="6 4"/>`;
+  o.lbl.forEach((l,i)=>{g+=`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="12" fill="var(--text-2)">${l.split(' ')[1]}</text>`;
     const tip=ttHTML(o.tip[i],o.series.map(s=>[s.c,s.n,`${dec(s.v[i])}%`,s.v[i]>o.limit?'c':'n']));g+=`<rect class="hit" x="${pl+iw*i/n}" y="${pt}" width="${iw/n}" height="${ih}" rx="6" data-tip="${tip}"/>`});
   o.series.forEach(s=>{const pts=s.v.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
     g+=`<polyline points="${pts}" fill="none" stroke="${s.c}" stroke-width="${s.dim?1.5:2.5}" stroke-linejoin="round" stroke-linecap="round" opacity="${s.dim?.3:1}" style="pointer-events:none"/>`;
-    s.v.forEach((v,i)=>g+=`<circle cx="${x(i)}" cy="${y(v)}" r="${i===n-1?4:3}" fill="#fff" stroke="${v>o.limit&&!s.dim?'#EF4444':s.c}" stroke-width="2" opacity="${s.dim?.3:1}" style="pointer-events:none"/>`)});
+    s.v.forEach((v,i)=>g+=`<circle cx="${x(i)}" cy="${y(v)}" r="${i===n-1?4:3}" fill="var(--card)" stroke="${v>o.limit&&!s.dim?'#EF4444':s.c}" stroke-width="2" opacity="${s.dim?.3:1}" style="pointer-events:none"/>`)});
   return `<svg viewBox="0 0 ${w} ${H}" height="${H}" role="img" aria-label="${o.aria}">${g}</svg>`;
 }
 function drawCharts(){document.querySelectorAll('[data-chart]').forEach(c=>{const f=CH[c.dataset.chart];if(f){c.innerHTML='';c.innerHTML=f(Math.max(260,c.clientWidth-24),Math.max(150,c.clientHeight-4));c.dataset.sz=c.clientWidth+'x'+c.clientHeight;chartRO&&chartRO.observe(c)}})}
@@ -1330,9 +1407,9 @@ const SKEL={
 function render(anim=true){
   renderTop();
   const v=el('view');v.classList.toggle('static',!anim);
-  if(S.tab==='overview')v.innerHTML=`${statusHTML()}${kpisHTML()}<div class="ov-bottom">${chartCardHTML()}${alertsCardHTML()}${S.mode==='loading'?'<aside class="card col" id="buddyCard"></aside>':buddyCardHTML()}</div>`;
+  if(S.tab==='overview')v.innerHTML=`${syncBanner()}${statusHTML()}${kpisHTML()}<div class="ov-grid">${alertsCardHTML()}${chartCardHTML()}${S.mode==='loading'?'<aside class="card col" id="buddyCard"></aside>':buddyCardHTML()}</div>`;
   else if(S.mode==='loading')v.innerHTML=SKEL[S.tab]();
-  else v.innerHTML=`<div class="view-in" style="display:contents">${{production:viewProduction,stock:viewStock,finance:viewFinance}[S.tab]()}</div>`;
+  else v.innerHTML=`${syncBanner()}<div class="view-in" style="display:contents">${{production:viewProduction,stock:viewStock,finance:viewFinance}[S.tab]()}</div>`;
   if(anim)v.firstElementChild&&v.classList.add('enter');
   requestAnimationFrame(()=>{drawCharts();document.querySelectorAll('.prompts').forEach(updPrompts)});
   renderFab();
@@ -1367,6 +1444,12 @@ document.addEventListener('click',e=>{
     case'al-more':S.alMore=!S.alMore;render(false);break;
     case'next-tip':stepTip(1);break;
     case'prompts-more':{const r=t.parentElement.querySelector('.prompts');r.scrollBy({left:Math.max(160,r.clientWidth*.7),behavior:'smooth'});break}
+    case'theme':{const next=isDark()?'light':'dark',r=t.getBoundingClientRect();
+      // circle reveal from the toggle (View Transitions); fallback: short color fade; reduced motion: instant
+      if(matchMedia('(prefers-reduced-motion: reduce)').matches){setTheme(next);break}
+      if(document.startViewTransition){const root=document.documentElement;root.style.setProperty('--vx',(r.left+r.width/2)+'px');root.style.setProperty('--vy',(r.top+r.height/2)+'px');{const x=r.left+r.width/2,y=r.top+r.height/2;root.style.setProperty('--vr',Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))+'px')}S.themeSpin=true;document.startViewTransition(()=>setTheme(next))}
+      else{document.documentElement.classList.add('theme-fade');setTheme(next);setTimeout(()=>document.documentElement.classList.remove('theme-fade'),560)}
+      break}
     case'prev-tip':stepTip(-1);break;
     case'pause-tip':S.tipPaused=!S.tipPaused;refreshInsight();const pb=document.querySelector('[data-act=pause-tip]');if(pb)pb.focus();break;
     case'hide-tip':S.fabTip=false;renderFab();break;
@@ -1377,6 +1460,7 @@ document.addEventListener('click',e=>{
     case'pf':S.pf=t.dataset.v;render();break;
     case'sf':S.sf=t.dataset.v;render();break;
     case'sact':S.sAct=t.checked;render();break;
+    case'clear-stock-filter':S.sAct=false;S.sf='all';render(false);break;
     case'fp':S.fp=t.dataset.v;render();break;
     case'clear-ai':S.aiFilter=false;render();break;
     case'info':openInfo(t.dataset.k);break;

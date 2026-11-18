@@ -287,3 +287,13 @@ The interface is in English and addresses Pak Hendra as "you". It's short, about
 | Simple bars | Stacked blue bars by distributor or line, target pill, event annotation, tooltip card |
 | Light detail tabs | Production: product, SKU, live output, rejects chart. Stock: supplier, lead time, PO, reorder plan. Finance: distributors, aging, overdue, upcoming |
 | Bahasa Indonesia | English |
+
+## Overview layout, dark mode and states (Nov 2026 update)
+
+- **Overview hierarchy:** status banner → 4 KPI cards (full width) → three columns sized by priority: **Needs attention** (widest, 1.35fr, with a running border light while alerts are open) · Revenue vs target (1.15fr) · Sari (0.85fr). Phones stack in the same order.
+- **Dark mode:** follows the system; the sun/moon button in the top bar overrides it and is remembered per browser (`localStorage` key `fd-theme`, applied as `data-theme` on `<html>` before first paint). All surfaces, charts and illustrations read color tokens, so any new color must be a token with a dark value.
+- **Illustrated states** (`stateBox()` + `ILL` in `index.html`), drawn with tokens so they work in both themes:
+  - *Sync error* (`sync`): banner at the top of Overview and Product when production data stops syncing, with Try again and a link to the data source.
+  - *Offline* (`offline`): banner at the top of every tab.
+  - *All clear* (`clear`): Needs attention when nothing is open.
+  - *No match* (`nomatch`): Stock table when a filter returns nothing, with "Show all materials".
